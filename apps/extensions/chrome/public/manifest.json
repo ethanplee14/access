@@ -1,0 +1,12 @@
+{
+  "name": "Access extension",
+  "description": "Extension to quickly bookmark links to Access",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "hello_extensions.png"
+  },
+  "host_permissions": ["http://localhost:3000/*", "https://access-beta.vercel.app/"],
+  "permissions": ["cookies", "tabs"]
+}
