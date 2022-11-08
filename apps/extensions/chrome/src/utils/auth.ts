@@ -1,4 +1,4 @@
-import configs from "../../configs.json";
+import configs from "../../config.json";
 
 export async function checkLoggedIn() {
   const nextAuthURL = configs.ACCESS_URL;

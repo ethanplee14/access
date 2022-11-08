@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { trpc } from "./utils/trpc";
-import configs from "../configs.json";
+import configs from "../config.json";
 import Resource from "./resource";
 import superjson from "superjson";
 import { checkLoggedIn } from "./utils/auth";
