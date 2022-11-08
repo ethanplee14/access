@@ -32,10 +32,6 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_ID,
       clientSecret: env.GOOGLE_SECRET,
     }),
-    TwitterProvider({
-      clientId: env.TWITTER_ID,
-      clientSecret: env.TWITTER_SECRET,
-    }),
   ],
 };
 

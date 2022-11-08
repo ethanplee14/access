@@ -12,8 +12,6 @@ export const serverSchema = z.object({
   NEXTAUTH_URL: z.string().url(),
   GOOGLE_ID: z.string(),
   GOOGLE_SECRET: z.string(),
-  TWITTER_ID: z.string(),
-  TWITTER_SECRET: z.string(),
 });
 
 /**
