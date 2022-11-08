@@ -53,7 +53,7 @@ export default function Resource() {
 
   return (
     <>
-      <main className="w-96">
+      <main className="w-96 px-2 overflow-y-auto">
         <div className="w-full md:max-w-3xl p-2 mt-4 mx-auto">
           <div className="flex font-mono font-semibold gap-2 text-xl mb-4">
             <DocumentPlusIcon className={"w-4"} />

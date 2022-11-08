@@ -201,15 +201,19 @@ export const vaultRouter = createProtectedRouter()
       const missingTags = input.tags.filter(
         (t) => !existingTags.map((et) => et.name).includes(t)
       );
-      const { tags: tagIds } = await ctx.prisma.vaultSubject.update({
+      const { tags } = await ctx.prisma.vaultSubject.update({
         where: subjectCompositeId,
         data: {
           tags: { create: missingTags.map((t) => ({ name: t })) },
         },
         select: {
-          tags: { select: { id: true } },
+          tags: { select: { id: true, name: true } },
         },
       });
+      const tagDict: Record<string, string> = {};
+      tags.forEach((tag) => (tagDict[tag.name] = tag.id));
+      const tagIds = input.tags.map((t) => ({ id: tagDict[t] }));
+
       return ctx.prisma.vaultSubject.update({
         where: subjectCompositeId,
         data: {
