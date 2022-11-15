@@ -115,6 +115,7 @@ export default function VaultResourceViewer({
           </div>
           <div className={"flex gap-2"}>
             <iframe
+              id="res-iframe"
               src={iframeURL}
               className={
                 "rounded-md w-2/3 min-h-[32rem] border-gray-300 border shadow-lg"

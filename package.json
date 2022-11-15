@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
+    "dev:web": "pnpm --filter @access/web run dev",
+    "dev:chrome": "pnpm --filter @access/chrome run dev",
+    "build:web": "pnpm --filter @access/web run build",
+    "build:chrome": "pnpm --filter @access/chrom run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
