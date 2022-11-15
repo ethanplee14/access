@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { trpc } from "./utils/trpc";
-import configs from "../config.json";
+import config from "../config.json";
 import Resource from "./resource";
 import superjson from "superjson";
 import { checkLoggedIn } from "./utils/auth";
@@ -12,13 +12,13 @@ export default function App() {
   const [trpcClient] = useState(() =>
     trpc.createClient({
       transformer: superjson,
-      url: configs.ACCESS_URL + "/api/trpc",
+      url: config.ACCESS_URL + "/api/trpc",
     })
   );
 
   checkLoggedIn().then((loggedIn) => {
     if (!loggedIn) {
-      chrome.tabs.create({ url: configs.ACCESS_URL });
+      chrome.tabs.create({ url: config.ACCESS_URL });
     }
   });
 
