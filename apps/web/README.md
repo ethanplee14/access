@@ -18,4 +18,5 @@ mysql db url and nextauth configurations.
   - Update: Went with slate.js. Offers typescript supports and a lot of easy customization. In beta, but mature enough to adopt
 - [React digraph editor by uber](https://github.com/uber/react-digraph)
 - [iframe usage specifications](https://blog.bitsrc.io/best-practices-in-using-iframes-with-react-6193feaa1e08)
+- Raindrop uses iframes a bit differently from a preview.system source. They can load web pages even if it's blocked by iframe policy.... sus. investigate further. Will put iframe system on hold for now.
 - [Keysely - If ever need to phase out prisma](https://github.com/depot/kysely-planetscale)

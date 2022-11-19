@@ -1,5 +1,5 @@
 import { trpc } from "../../utils/trpc";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { VaultResource, VaultTag } from "@prisma/client";
 import { Descendant } from "slate";
 import Head from "next/head";
@@ -17,6 +17,7 @@ import EditResourceModal from "./edit-resource-modal";
 import StarVote from "../common/inputs/star-vote";
 import { useRouter } from "next/router";
 import { Metadata } from "../../server/scripts/meta-fetcher";
+import classNames from "classnames";
 
 export interface VaultResourceViewerProps {
   subjectName: string;
@@ -42,13 +43,8 @@ export default function VaultResourceViewer({
   const [review, setReview] = useState<Descendant[]>(
     resource.review && JSON.parse(resource.review).length > 0
       ? JSON.parse(resource.review)
-      : [{ type: "p", children: [{ text: "Click to add review!" }] }]
+      : [{ type: "p", children: [{ text: "Click to add description." }] }]
   );
-
-  let iframeURL = resource.url;
-  if (iframeURL.includes("youtube")) {
-    iframeURL = "https://youtube.com/embed/" + resource.url.split("=")[1];
-  }
 
   return (
     <>
@@ -113,51 +109,40 @@ export default function VaultResourceViewer({
               }}
             />
           </div>
-          <div className={"flex gap-2"}>
-            <iframe
-              id="res-iframe"
-              src={iframeURL}
-              className={
-                "rounded-md w-2/3 min-h-[32rem] border-gray-300 border shadow-lg"
-              }
-            />
-            <div className="w-1/3">
-              <div
-                ref={editorRef}
-                onMouseDown={(_) => {
-                  if (editingReview) return;
+          <div
+            ref={editorRef}
+            onMouseDown={(_) => {
+              if (editingReview) return;
 
-                  function disableReviewEdit(e: React.MouseEvent) {
-                    if (!editorRef.current?.contains(e.target as Node)) {
-                      setEditingReview(false);
-                      document.removeEventListener(
-                        "click",
-                        disableReviewEdit as any
-                      );
-                      // gotta access the set state builder in order to get updated state since the event listener doesn't
-                      // exist in the same context as react. React and native DOM event listeners don't play well together....
-                      // Really tempting me to hit up SolidJS
-                      setReview((rev) => {
-                        reviewMutation.mutate({
-                          resId: resource.id,
-                          review: JSON.stringify(rev),
-                        });
-                        return rev;
-                      });
-                    }
-                  }
-                  setEditingReview(true);
-                  document.addEventListener("click", disableReviewEdit as any);
-                }}
-              >
-                <RichTextarea
-                  className={"min-h-[32rem] shadow-lg"}
-                  readonly={!editingReview}
-                  initialValue={review}
-                  onChange={(val) => setReview(val)}
-                />
-              </div>
-            </div>
+              function disableReviewEdit(e: React.MouseEvent) {
+                if (!editorRef.current?.contains(e.target as Node)) {
+                  setEditingReview(false);
+                  document.removeEventListener(
+                    "click",
+                    disableReviewEdit as any
+                  );
+                  // gotta access the set state builder in order to get updated state since the event listener doesn't
+                  // exist in the same context as react. React and native DOM event listeners don't play well together....
+                  // Really tempting me to hit up SolidJS
+                  setReview((rev) => {
+                    reviewMutation.mutate({
+                      resId: resource.id,
+                      review: JSON.stringify(rev),
+                    });
+                    return rev;
+                  });
+                }
+              }
+              setEditingReview(true);
+              document.addEventListener("click", disableReviewEdit as any);
+            }}
+          >
+            <RichTextarea
+              className={"min-h-[32rem] shadow-lg"}
+              readonly={!editingReview}
+              initialValue={review}
+              onChange={(val) => setReview(val)}
+            />
           </div>
         </div>
       </main>
