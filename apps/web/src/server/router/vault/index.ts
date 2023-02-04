@@ -32,7 +32,6 @@ export const vaultRouter = createProtectedRouter()
         },
         include: { resources: { include: { tags: true } } },
       });
-
       if (!subjectWithResources)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -48,11 +47,17 @@ export const vaultRouter = createProtectedRouter()
       > = {};
       await Promise.all(
         subjectWithResources.resources.map(async (r) => {
-          const meta = await fetchMetadata(r.url);
-          resourcesWithMeta[r.id] = { ...r, meta };
+          try {
+            const meta = await fetchMetadata(r.url, 1000);
+            resourcesWithMeta[r.id] = { ...r, meta };
+          } catch (e) {
+            resourcesWithMeta[r.id] = {
+              ...r,
+              meta: { title: "", description: "", image: "" },
+            };
+          }
         })
       );
-
       return { subject: subjectWithResources, resources: resourcesWithMeta };
     },
   })

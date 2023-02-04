@@ -57,6 +57,7 @@ export default function Vault() {
               graphData={graphData}
               nodeColor={(_) => "#505050"}
               onNodeClick={(node: any, e: MouseEvent) => {
+                console.log("We received clik");
                 router.push("/vault/" + node["label"].toLowerCase());
               }}
               onNodeRightClick={(node: any, e: MouseEvent) => {
