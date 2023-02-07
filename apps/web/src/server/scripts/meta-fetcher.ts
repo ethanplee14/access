@@ -8,7 +8,7 @@ export interface Metadata {
 
 export default function fetchMetadata(
   url: string,
-  timeout?: number
+  timeout: number = 5000
 ): Promise<Metadata> {
   let urlRegex =
     /(ftp|http|https):\/\/(\w+:?\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@\-\/]))?/;
