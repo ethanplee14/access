@@ -22,10 +22,15 @@ export const resourceViewerRouter = createProtectedRouter()
         where: { id: input.resId },
         include: { tags: true },
       });
-
+      console.log(resource);
       if (!resource) return null;
 
-      const meta = await fetchMetadata(resource.url);
+      let meta = { title: "", description: "", image: "" };
+      try {
+        meta = await fetchMetadata(resource.url);
+      } catch (e) {
+        console.log("Failed to lookup meta data for: " + resource.url);
+      }
       return { ...resource, meta };
     },
   })
