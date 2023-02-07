@@ -145,6 +145,24 @@ export const vaultRouter = createProtectedRouter()
       });
     },
   })
+  .mutation("addRelationship", {
+    input: z.object({
+      source: z.string(),
+      target: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      ctx.prisma.vaultSubject.update({
+        where: {
+          userId_id: {
+            userId: ctx.session.user.id,
+            id: input.source,
+          },
+        },
+        data: {},
+      });
+      return "";
+    },
+  })
   .mutation("deleteSubject", {
     input: z.string(),
     async resolve({ ctx, input }) {
