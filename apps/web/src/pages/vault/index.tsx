@@ -24,6 +24,7 @@ export default function Vault() {
   const router = useRouter();
 
   const subjectGraphQuery = trpc.useQuery(["vault.subjectGraph"]);
+  const subjectMutation = trpc.useMutation(["vault.editSubject"]);
 
   const [graphData, setGraphData] = useState<
     { nodes: NodeObject[]; links: LinkObject[] } | undefined
@@ -111,7 +112,7 @@ export default function Vault() {
               onClick={(_) => {
                 setTargetNode(contextNode.current);
                 setContextMenuPos(undefined);
-                contextNode.current = undefined;
+                contextNode.current = "";
               }}
             >
               <LinkIcon className={"w-5"} />
