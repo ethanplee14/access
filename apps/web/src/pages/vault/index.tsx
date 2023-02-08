@@ -24,7 +24,7 @@ export default function Vault() {
   const router = useRouter();
 
   const subjectGraphQuery = trpc.useQuery(["vault.subjectGraph"]);
-  const subjectMutation = trpc.useMutation(["vault.editSubject"]);
+  const addRelationship = trpc.useMutation(["vault.addRelationship"]);
 
   const [graphData, setGraphData] = useState<
     { nodes: NodeObject[]; links: LinkObject[] } | undefined
@@ -65,6 +65,10 @@ export default function Vault() {
               onNodeClick={(node: any, e: MouseEvent) => {
                 if (targetNode) {
                   if (targetNode != node.id) {
+                    addRelationship.mutateAsync({
+                      source: targetNode,
+                      target: node.id,
+                    });
                     setGraphData({
                       nodes: graphData?.nodes ?? [],
                       links: [

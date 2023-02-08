@@ -151,18 +151,22 @@ export const vaultRouter = createProtectedRouter()
       target: z.string(),
     }),
     async resolve({ ctx, input }) {
-      ctx.prisma.vaultSubject.update({
+      return ctx.prisma.vaultSubject.update({
         where: {
           userId_id: {
             userId: ctx.session.user.id,
             id: input.source,
           },
         },
-        data: {},
+        data: {
+          children: {
+            connect: { id: input.target },
+          },
+        },
       });
-      return "";
     },
   })
+  // .mutation("removeRelationship", {})
   .mutation("deleteSubject", {
     input: z.string(),
     async resolve({ ctx, input }) {
