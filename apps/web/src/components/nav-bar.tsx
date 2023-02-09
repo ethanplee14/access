@@ -6,19 +6,22 @@ import {
   ArrowLeftOnRectangleIcon,
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
+import SearchInput from "./common/inputs/search-input";
 
 export default function NavBar() {
   const { status } = useSession();
 
   return (
     <nav className={"px-10 py-2 shadow-sm border-b border-gray-300"}>
-      <div className="flex max-w-8xl mx-auto">
+      <div className="flex items-center max-w-8xl mx-auto">
         <h1 className="text-xl font-mono font-bold">
           <Link href={"/"}>
             <a>access</a>
           </Link>
         </h1>
-        <div className="flex-1" />
+        <div className="flex-1">
+          <SearchInput className="input-sm w-2/3 mx-auto" />
+        </div>
         {status == "unauthenticated" ? <LoginBar /> : <NavigationOptions />}
       </div>
     </nav>
