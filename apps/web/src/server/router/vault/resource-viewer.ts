@@ -22,7 +22,6 @@ export const resourceViewerRouter = createProtectedRouter()
         where: { id: input.resId },
         include: { tags: true },
       });
-      console.log(resource);
       if (!resource) return null;
 
       let meta = { title: "", description: "", image: "" };

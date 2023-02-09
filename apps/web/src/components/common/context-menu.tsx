@@ -11,8 +11,6 @@ export interface ContextMenuProps {
 export default function ContextMenu(props: ContextMenuProps) {
   const ref = React.createRef<HTMLUListElement>();
 
-  if (props.position) registerCloseListener();
-
   return (
     <ul
       ref={ref}

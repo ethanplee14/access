@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { LinkObject, NodeObject } from "react-force-graph-2d";
@@ -12,6 +12,7 @@ import getAuthServerSideProps from "../../server/common/get-auth-server-side-pro
 import { Point } from "../../types/geometry";
 import ContextMenu from "../../components/common/context-menu";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { LinkIcon } from "@heroicons/react/20/solid";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
@@ -23,11 +24,17 @@ export default function Vault() {
   const router = useRouter();
 
   const subjectGraphQuery = trpc.useQuery(["vault.subjectGraph"]);
+  const addRelationship = trpc.useMutation(["vault.addRelationship"]);
+  const removeRelationship = trpc.useMutation(["vault.removeRelationship"]);
 
   const [graphData, setGraphData] = useState<
     { nodes: NodeObject[]; links: LinkObject[] } | undefined
   >();
   const [contextMenuPos, setContextMenuPos] = useState<Point>();
+  const [linkMenuPos, setLinkMenuPos] = useState<Point>();
+  const [targetNode, setTargetNode] = useState("");
+  const ctxNode = useRef("");
+  const ctxLink = useRef<LinkObject | undefined>();
 
   useEffect(() => {
     const graphData = parseGraphData();
@@ -55,14 +62,41 @@ export default function Vault() {
               width={containerSize.width - 1}
               height={containerSize.height - 1}
               graphData={graphData}
-              nodeColor={(_) => "#505050"}
+              nodeColor={(node) => {
+                return targetNode == node.id ? "gold" : "#505050";
+              }}
               onNodeClick={(node: any, e: MouseEvent) => {
-                console.log("We received clik");
-                router.push("/vault/" + node["label"].toLowerCase());
+                if (targetNode) {
+                  if (targetNode != node.id) {
+                    addRelationship.mutateAsync({
+                      parent: targetNode,
+                      child: node.id,
+                    });
+                    setGraphData({
+                      nodes: graphData?.nodes ?? [],
+                      links: [
+                        ...(graphData?.links ?? []),
+                        { source: targetNode, target: node.id },
+                      ],
+                    });
+                  }
+                  setTargetNode("");
+                } else router.push("/vault/" + node["label"].toLowerCase());
               }}
               onNodeRightClick={(node: any, e: MouseEvent) => {
                 e.preventDefault();
+                setContextMenuPos({ x: e.clientX, y: e.clientY });
+                ctxNode.current = node.id;
               }}
+              onLinkRightClick={(link, e) => {
+                setLinkMenuPos({ x: e.clientX, y: e.clientY });
+                ctxLink.current = link;
+              }}
+              onBackgroundClick={(e) => {
+                setContextMenuPos(undefined);
+                setLinkMenuPos(undefined);
+              }}
+              linkWidth={2}
               linkDirectionalArrowLength={3}
               linkDirectionalArrowRelPos={1}
               nodeCanvasObjectMode={() => "after"}
@@ -81,12 +115,55 @@ export default function Vault() {
             />
           </div>
         </div>
+        {/* Link menu */}
+        <ContextMenu position={linkMenuPos}>
+          <li>
+            <a
+              className="rounded"
+              onClick={(_) => {
+                const link = ctxLink.current;
+                // i mighta crossed the names here
+                removeRelationship.mutateAsync({
+                  parent: ((link?.source as NodeObject).id as string) ?? "",
+                  child: ((link?.target as NodeObject).id as string) ?? "",
+                });
+                console.log(link);
+                setGraphData({
+                  nodes: graphData?.nodes ?? [],
+                  links:
+                    graphData?.links?.filter(
+                      (l) =>
+                        l.source != link?.source || l.target != link?.target
+                    ) ?? [],
+                });
+                setLinkMenuPos(undefined);
+                ctxLink.current = undefined;
+              }}
+            >
+              Disconnect
+            </a>
+          </li>
+        </ContextMenu>
+        {/* Subject Menu */}
         <ContextMenu
           position={contextMenuPos}
           onClose={() => setContextMenuPos(undefined)}
         >
           <li>
-            <a className={"rounded-none hover:bg-error"} onClick={(_) => {}}>
+            <a
+              className={"rounded"}
+              onClick={(_) => {
+                setTargetNode(ctxNode.current);
+                setContextMenuPos(undefined);
+                ctxNode.current = "";
+              }}
+            >
+              <LinkIcon className={"w-5"} />
+              Connect
+            </a>
+          </li>
+          <li>
+            <a className={"rounded hover:bg-error"} onClick={(_) => {}}>
               <TrashIcon className={"w-5"} />
               Delete
             </a>
