@@ -25,13 +25,16 @@ export default function Vault() {
 
   const subjectGraphQuery = trpc.useQuery(["vault.subjectGraph"]);
   const addRelationship = trpc.useMutation(["vault.addRelationship"]);
+  const removeRelationship = trpc.useMutation(["vault.removeRelationship"]);
 
   const [graphData, setGraphData] = useState<
     { nodes: NodeObject[]; links: LinkObject[] } | undefined
   >();
   const [contextMenuPos, setContextMenuPos] = useState<Point>();
+  const [linkMenuPos, setLinkMenuPos] = useState<Point>();
   const [targetNode, setTargetNode] = useState("");
-  const contextNode = useRef("");
+  const ctxNode = useRef("");
+  const ctxLink = useRef<LinkObject | undefined>();
 
   useEffect(() => {
     const graphData = parseGraphData();
@@ -66,8 +69,8 @@ export default function Vault() {
                 if (targetNode) {
                   if (targetNode != node.id) {
                     addRelationship.mutateAsync({
-                      source: targetNode,
-                      target: node.id,
+                      parent: targetNode,
+                      child: node.id,
                     });
                     setGraphData({
                       nodes: graphData?.nodes ?? [],
@@ -83,11 +86,17 @@ export default function Vault() {
               onNodeRightClick={(node: any, e: MouseEvent) => {
                 e.preventDefault();
                 setContextMenuPos({ x: e.clientX, y: e.clientY });
-                contextNode.current = node.id;
+                ctxNode.current = node.id;
+              }}
+              onLinkRightClick={(link, e) => {
+                setLinkMenuPos({ x: e.clientX, y: e.clientY });
+                ctxLink.current = link;
               }}
               onBackgroundClick={(e) => {
                 setContextMenuPos(undefined);
+                setLinkMenuPos(undefined);
               }}
+              linkWidth={2}
               linkDirectionalArrowLength={3}
               linkDirectionalArrowRelPos={1}
               nodeCanvasObjectMode={() => "after"}
@@ -106,6 +115,36 @@ export default function Vault() {
             />
           </div>
         </div>
+        {/* Link menu */}
+        <ContextMenu position={linkMenuPos}>
+          <li>
+            <a
+              className="rounded"
+              onClick={(_) => {
+                const link = ctxLink.current;
+                // i mighta crossed the names here
+                removeRelationship.mutateAsync({
+                  parent: ((link?.source as NodeObject).id as string) ?? "",
+                  child: ((link?.target as NodeObject).id as string) ?? "",
+                });
+                console.log(link);
+                setGraphData({
+                  nodes: graphData?.nodes ?? [],
+                  links:
+                    graphData?.links?.filter(
+                      (l) =>
+                        l.source != link?.source || l.target != link?.target
+                    ) ?? [],
+                });
+                setLinkMenuPos(undefined);
+                ctxLink.current = undefined;
+              }}
+            >
+              Disconnect
+            </a>
+          </li>
+        </ContextMenu>
+        {/* Subject Menu */}
         <ContextMenu
           position={contextMenuPos}
           onClose={() => setContextMenuPos(undefined)}
@@ -114,9 +153,9 @@ export default function Vault() {
             <a
               className={"rounded"}
               onClick={(_) => {
-                setTargetNode(contextNode.current);
+                setTargetNode(ctxNode.current);
                 setContextMenuPos(undefined);
-                contextNode.current = "";
+                ctxNode.current = "";
               }}
             >
               <LinkIcon className={"w-5"} />
