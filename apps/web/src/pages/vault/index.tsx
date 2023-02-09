@@ -2,7 +2,11 @@ import Head from "next/head";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { LinkObject, NodeObject } from "react-force-graph-2d";
+import {
+  ForceGraphMethods,
+  LinkObject,
+  NodeObject,
+} from "react-force-graph-2d";
 
 import NavBar from "../../components/nav-bar";
 import { trpc } from "../../utils/trpc";
@@ -33,8 +37,9 @@ export default function Vault() {
   const [contextMenuPos, setContextMenuPos] = useState<Point>();
   const [linkMenuPos, setLinkMenuPos] = useState<Point>();
   const [targetNode, setTargetNode] = useState("");
+  const forceGraph = useRef();
   const ctxNode = useRef("");
-  const ctxLink = useRef<LinkObject | undefined>();
+  const ctxLink = useRef<LinkObject>();
 
   useEffect(() => {
     const graphData = parseGraphData();
@@ -48,7 +53,12 @@ export default function Vault() {
         <link rel="icon" href="/icons/favicon.ico" />
       </Head>
       <main className={"w-screen h-screen flex flex-col"}>
-        <NavBar />
+        <NavBar
+          subjects={graphData?.nodes
+            ?.map((n) => ((n as any).label as string) ?? "")
+            ?.sort((s1, s2) => (s1 < s2 ? -1 : 1))}
+          // onSearch={}
+        />
         <div className={"relative flex-1 w-full"}>
           <div ref={containerRef} className="absolute w-full h-full" />
           <div className="absolute w-full h-full overflow-hidden">
@@ -59,6 +69,7 @@ export default function Vault() {
             )}
             {/* When conditionally rendered ForceGraph2D doesn't render contents for some reason */}
             <ForceGraph2D
+              ref={forceGraph}
               width={containerSize.width - 1}
               height={containerSize.height - 1}
               graphData={graphData}
@@ -66,22 +77,24 @@ export default function Vault() {
                 return targetNode == node.id ? "gold" : "#505050";
               }}
               onNodeClick={(node: any, e: MouseEvent) => {
-                if (targetNode) {
-                  if (targetNode != node.id) {
-                    addRelationship.mutateAsync({
-                      parent: targetNode,
-                      child: node.id,
-                    });
-                    setGraphData({
-                      nodes: graphData?.nodes ?? [],
-                      links: [
-                        ...(graphData?.links ?? []),
-                        { source: targetNode, target: node.id },
-                      ],
-                    });
-                  }
-                  setTargetNode("");
-                } else router.push("/vault/" + node["label"].toLowerCase());
+                console.log(forceGraph.current);
+                // forceGraph.current?.centerAt(node.x, node.y, 500);
+                // if (targetNode) {
+                //   if (targetNode != node.id) {
+                //     addRelationship.mutateAsync({
+                //       parent: targetNode,
+                //       child: node.id,
+                //     });
+                //     setGraphData({
+                //       nodes: graphData?.nodes ?? [],
+                //       links: [
+                //         ...(graphData?.links ?? []),
+                //         { source: targetNode, target: node.id },
+                //       ],
+                //     });
+                //   }
+                //   setTargetNode("");
+                // } else router.push("/vault/" + node["label"].toLowerCase());
               }}
               onNodeRightClick={(node: any, e: MouseEvent) => {
                 e.preventDefault();

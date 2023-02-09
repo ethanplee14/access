@@ -1,24 +1,40 @@
 import Link from "next/link";
-import { UserCircleIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import { signOut, useSession } from "next-auth/react";
 import {
   ArchiveBoxIcon,
   ArrowLeftOnRectangleIcon,
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
+import SearchInput from "./common/inputs/search-input";
 
-export default function NavBar() {
+export default function NavBar({
+  subjects,
+  onSearch,
+}: {
+  subjects?: string[];
+  onSearch?: (subject: string) => void;
+}) {
   const { status } = useSession();
 
   return (
     <nav className={"px-10 py-2 shadow-sm border-b border-gray-300"}>
-      <div className="flex max-w-8xl mx-auto">
+      <div className="flex items-center max-w-8xl mx-auto">
         <h1 className="text-xl font-mono font-bold">
           <Link href={"/"}>
             <a>access</a>
           </Link>
         </h1>
-        <div className="flex-1" />
+        <div className="flex-1">
+          <div className="w-2/3 mx-auto">
+            <SearchInput
+              label={<MagnifyingGlassIcon className="w-5 h-5" />}
+              className="input-sm"
+              selections={subjects}
+              onSelect={onSearch}
+            />
+          </div>
+        </div>
         {status == "unauthenticated" ? <LoginBar /> : <NavigationOptions />}
       </div>
     </nav>
