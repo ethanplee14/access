@@ -32,7 +32,7 @@ export default function SearchInput(props: SearchInputProps) {
   );
 
   return (
-    <div className="dropdown">
+    <div className="dropdown w-full">
       {props.label ? (
         <div className={"input-group"}>
           <span>{props.label}</span>
@@ -43,7 +43,7 @@ export default function SearchInput(props: SearchInputProps) {
       )}
       <ul
         tabIndex={0}
-        className="absolute mt-2 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-box w-full"
+        className="absolute mt-2 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-box w-full max-h-48 overflow-y-auto flex-nowrap"
       >
         {filteredSelections.length == 0 ? (
           <li>
@@ -55,6 +55,7 @@ export default function SearchInput(props: SearchInputProps) {
           filteredSelections.map((s, i) => (
             <li
               key={"search-" + s}
+              className="w-full"
               onClick={(e) => {
                 e.currentTarget?.parentElement?.blur();
                 props.onSelect?.(s);
