@@ -7,7 +7,6 @@ export interface SearchInputProps {
   value?: string;
   selections?: string[];
   label?: ReactNode;
-  labelLeft?: ReactNode;
   emptyDisplay?: ReactNode;
   className?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
