@@ -13,7 +13,7 @@ export default function Vault() {
   const containerSize = useElementResize(containerRef);
 
   const { data: subjectData } = trpc.useQuery(["vault.subjectGraph"]);
-  const [searchedSubject, setSearchedSubjcet] = useState("");
+  const [searchedSubject, setSearchedSubject] = useState("");
 
   const sortedSubjectNames =
     subjectData != undefined
@@ -29,7 +29,7 @@ export default function Vault() {
         <link rel="icon" href="/icons/favicon.ico" />
       </Head>
       <main className={"w-screen h-screen flex flex-col"}>
-        <NavBar subjects={sortedSubjectNames} onSearch={setSearchedSubjcet} />
+        <NavBar subjects={sortedSubjectNames} onSearch={setSearchedSubject} />
         <div className={"relative flex-1 w-full"}>
           <div ref={containerRef} className="absolute w-full h-full" />
           <div className="absolute w-full h-full overflow-hidden">
@@ -42,6 +42,7 @@ export default function Vault() {
               width={containerSize.width - 1}
               height={containerSize.height - 1}
               subjectData={subjectData}
+              subjectFocus={searchedSubject}
             />
           </div>
         </div>

@@ -49,7 +49,16 @@ export default function SubjectGraph(props: SubjectGraphProps) {
   useEffect(() => {
     if (!props.subjectFocus) return;
 
-    forceGraph.current?.centerAt();
+    const searchedNode = graphData?.nodes?.find(
+      (n: any) => n.label == props.subjectFocus
+    );
+    //add 30 to account for navbar
+    forceGraph.current?.centerAt(
+      searchedNode?.x,
+      (searchedNode?.y ?? 0) + 30,
+      500
+    );
+    forceGraph.current?.zoom(3, 500);
   }, [props.subjectFocus]);
 
   return (

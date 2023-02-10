@@ -7,6 +7,7 @@ import {
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
 import SearchInput from "./common/inputs/search-input";
+import { useState } from "react";
 
 export default function NavBar({
   subjects,
@@ -16,6 +17,7 @@ export default function NavBar({
   onSearch?: (subject: string) => void;
 }) {
   const { status } = useSession();
+  const [searchSubject, setSearchSubject] = useState("");
 
   return (
     <nav className={"px-10 py-2 shadow-sm border-b border-gray-300"}>
@@ -30,8 +32,13 @@ export default function NavBar({
             <SearchInput
               label={<MagnifyingGlassIcon className="w-5 h-5" />}
               className="input-sm"
+              value={searchSubject}
               selections={subjects}
-              onSelect={onSearch}
+              onChange={(e) => setSearchSubject(e.target.value)}
+              onSelect={(subj) => {
+                setSearchSubject(subj);
+                onSearch?.(subj);
+              }}
             />
           </div>
         </div>
