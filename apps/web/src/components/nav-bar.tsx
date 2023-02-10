@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserCircleIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import { signOut, useSession } from "next-auth/react";
 import {
   ArchiveBoxIcon,
@@ -8,7 +8,13 @@ import {
 } from "@heroicons/react/24/outline";
 import SearchInput from "./common/inputs/search-input";
 
-export default function NavBar() {
+export default function NavBar({
+  subjects,
+  onSearch,
+}: {
+  subjects?: string[];
+  onSearch?: (subject: string) => void;
+}) {
   const { status } = useSession();
 
   return (
@@ -20,7 +26,18 @@ export default function NavBar() {
           </Link>
         </h1>
         <div className="flex-1">
+<<<<<<< HEAD
           <SearchInput className="input-sm w-2/3 mx-auto" />
+=======
+          <div className="w-2/3 mx-auto">
+            <SearchInput
+              label={<MagnifyingGlassIcon className="w-5 h-5" />}
+              className="input-sm"
+              selections={subjects}
+              onSelect={onSearch}
+            />
+          </div>
+>>>>>>> 20682c800e5451c50c001f04cf4cdbb581fa332c
         </div>
         {status == "unauthenticated" ? <LoginBar /> : <NavigationOptions />}
       </div>
