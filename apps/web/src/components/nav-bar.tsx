@@ -28,9 +28,6 @@ export default function NavBar({
           </Link>
         </h1>
         <div className="flex-1">
-<<<<<<< HEAD
-          <SearchInput className="input-sm w-2/3 mx-auto" />
-=======
           <div className="w-2/3 mx-auto">
             <SearchInput
               label={<MagnifyingGlassIcon className="w-5 h-5" />}
@@ -44,7 +41,6 @@ export default function NavBar({
               }}
             />
           </div>
->>>>>>> 20682c800e5451c50c001f04cf4cdbb581fa332c
         </div>
         {status == "unauthenticated" ? <LoginBar /> : <NavigationOptions />}
       </div>
