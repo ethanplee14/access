@@ -13,7 +13,7 @@ export default function GraphSearch(props: GraphSearchProps) {
 
   return (
     <div>
-      {opened ? (
+      {!opened ? (
         <button
           className="btn btn-circle btn-sm btn-ghost"
           onClick={() => setOpened(!opened)}
