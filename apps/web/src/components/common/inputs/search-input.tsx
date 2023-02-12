@@ -9,6 +9,7 @@ export interface SearchInputProps {
   label?: ReactNode;
   emptyDisplay?: ReactNode;
   className?: string;
+  autofocus?: boolean;
   placeholder?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onSelect?: (selection: string) => void;
@@ -28,7 +29,7 @@ export default function SearchInput(props: SearchInputProps) {
       placeholder={props.placeholder || "Search..."}
       onKeyDown={keyDownHandler}
       value={props.value}
-      autoFocus={true}
+      autoFocus={props.autofocus}
       onChange={onChangeHandler}
     />
   );
