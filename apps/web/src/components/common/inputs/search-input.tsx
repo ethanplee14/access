@@ -28,6 +28,7 @@ export default function SearchInput(props: SearchInputProps) {
       placeholder={props.placeholder || "Search..."}
       onKeyDown={keyDownHandler}
       value={props.value}
+      autoFocus={true}
       onChange={onChangeHandler}
     />
   );
