@@ -9,6 +9,7 @@ export interface SearchInputProps {
   label?: ReactNode;
   emptyDisplay?: ReactNode;
   className?: string;
+  placeholder?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onSelect?: (selection: string) => void;
 }
@@ -24,7 +25,7 @@ export default function SearchInput(props: SearchInputProps) {
       type="text"
       tabIndex={0}
       className={classNames("input input-bordered w-full", props.className)}
-      placeholder={"Search..."}
+      placeholder={props.placeholder || "Search..."}
       onKeyDown={keyDownHandler}
       value={props.value}
       onChange={onChangeHandler}
@@ -43,12 +44,12 @@ export default function SearchInput(props: SearchInputProps) {
       )}
       <ul
         tabIndex={0}
-        className="absolute mt-2 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-box w-full max-h-48 overflow-y-auto flex-nowrap"
+        className="absolute mt-2 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-lg  w-full max-h-48 overflow-y-auto flex-nowrap"
       >
         {filteredSelections.length == 0 ? (
           <li>
             <a>
-              <InformationCircleIcon className={"w-5"} /> No selection found!
+              <InformationCircleIcon className={"w-5"} /> Type to search!
             </a>
           </li>
         ) : (
