@@ -1,16 +1,18 @@
 import { LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2D, {
   ForceGraphMethods,
   LinkObject,
   NodeObject,
 } from "react-force-graph-2d";
-import { Point } from "../types/geometry";
-import { trpc } from "../utils/trpc";
-import ContextMenu from "./common/context-menu";
-import LoadingDisplay from "./common/loading-display";
+import { Point } from "../../types/geometry";
+import { trpc } from "../../utils/trpc";
+import ContextMenu from "../common/context-menu";
+import LoadingDisplay from "../common/loading-display";
 import GraphSearch from "./graph-search";
+import LinkMenu from "./link-menu";
+import SubjectMenu from "./subject-menu";
 
 export interface SubjectGraphProps {
   width: number;
@@ -40,14 +42,14 @@ export default function SubjectGraph(props: SubjectGraphProps) {
   const [targetNode, setTargetNode] = useState("");
 
   const ctxNode = useRef("");
-  const ctxLink = useRef<LinkObject>();
+  const [linkObject, setLinkObject] = useState<LinkObject>();
 
-  const sortedSubjectNames =
-    subjectData != undefined
-      ? Object.values(subjectData)
-          .map((s) => s.name)
-          .sort((s1, s2) => (s1 < s2 ? -1 : 1))
-      : [];
+  const sortedSubjectNames = useMemo(() => {
+    if (!subjectData) return [];
+    return Object.values(subjectData)
+      .map((subject) => subject.name)
+      .sort((s1, s2) => (s1 < s2 ? -1 : 1));
+  }, [subjectData]);
 
   useEffect(() => {
     const graphData = parseForceGraphData();
@@ -95,7 +97,7 @@ export default function SubjectGraph(props: SubjectGraphProps) {
               ctx.textAlign = "center";
               ctx.textBaseline = "middle";
               ctx.fillStyle = "black";
-              ctx.fillText(node.label, node.x, node.y! + 12);
+              ctx.fillText(node.label, node.x!, node.y! + 12);
             }}
             onNodeClick={(node: any) => {
               if (targetNode) {
@@ -122,66 +124,38 @@ export default function SubjectGraph(props: SubjectGraphProps) {
             }}
             onLinkRightClick={(link, e) => {
               setLinkMenuPos({ x: e.clientX, y: e.clientY });
-              ctxLink.current = link;
+              setLinkObject(link);
             }}
             onBackgroundClick={(e) => {
               setContextMenuPos(undefined);
               setLinkMenuPos(undefined);
             }}
           />
-          {/* Link menu */}
-          <ContextMenu position={linkMenuPos}>
-            <li>
-              <a
-                className="rounded"
-                onClick={(_) => {
-                  const link = ctxLink.current;
-                  // i mighta crossed the names here
-                  removeRelationship.mutateAsync({
-                    parent: ((link?.source as NodeObject).id as string) ?? "",
-                    child: ((link?.target as NodeObject).id as string) ?? "",
-                  });
-                  setGraphData({
-                    nodes: graphData?.nodes ?? [],
-                    links:
-                      graphData?.links?.filter(
-                        (l) =>
-                          l.source != link?.source || l.target != link?.target
-                      ) ?? [],
-                  });
-                  setLinkMenuPos(undefined);
-                  ctxLink.current = undefined;
-                }}
-              >
-                Disconnect
-              </a>
-            </li>
-          </ContextMenu>
-          {/* Subject Menu */}
-          <ContextMenu
+          <LinkMenu
+            linkObject={linkObject}
+            position={linkMenuPos}
+            onDisconnect={() => {
+              setGraphData({
+                nodes: graphData?.nodes ?? [],
+                links:
+                  graphData?.links?.filter(
+                    (l) =>
+                      l.source != linkObject?.source ||
+                      l.target != linkObject?.target
+                  ) ?? [],
+              });
+              setLinkMenuPos(undefined);
+              setLinkObject(undefined);
+            }}
+          />
+          <SubjectMenu
             position={contextMenuPos}
-            onClose={() => setContextMenuPos(undefined)}
-          >
-            <li>
-              <a
-                className={"rounded"}
-                onClick={(_) => {
-                  setTargetNode(ctxNode.current);
-                  setContextMenuPos(undefined);
-                  ctxNode.current = "";
-                }}
-              >
-                <LinkIcon className={"w-5"} />
-                Connect
-              </a>
-            </li>
-            <li>
-              <a className={"rounded hover:bg-error"} onClick={(_) => {}}>
-                <TrashIcon className={"w-5"} />
-                Delete
-              </a>
-            </li>
-          </ContextMenu>
+            onConnect={() => {
+              setTargetNode(ctxNode.current);
+              setContextMenuPos(undefined);
+              ctxNode.current = "";
+            }}
+          />
         </>
       )}
     </>

@@ -1,5 +1,5 @@
 import { Modal, ModalProps } from "../common/modal";
-import { LabeledFormControl } from "../labeled-form-control";
+import { LabeledFormControl } from "../common/labeled-form-control";
 import { BookOpenIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { LimitedTextarea } from "../common/textarea/limited-textarea";

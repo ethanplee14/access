@@ -1,6 +1,6 @@
 import { Modal, ModalProps } from "../common/modal";
 import { trpc } from "../../utils/trpc";
-import { LabeledFormControl } from "../labeled-form-control";
+import { LabeledFormControl } from "../common/labeled-form-control";
 import { LinkIcon, PencilIcon, TagIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import SaveButton from "../common/buttons/save-button";

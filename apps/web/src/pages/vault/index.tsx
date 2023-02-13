@@ -2,7 +2,7 @@ import Head from "next/head";
 import React from "react";
 
 import NavBar from "../../components/nav-bar";
-import SubjectGraph from "../../components/subject-graph-wrapper";
+import SubjectGraph from "../../components/subject-graph";
 import { useElementResize } from "../../hooks/element-resize";
 import getAuthServerSideProps from "../../server/common/get-auth-server-side-props";
 

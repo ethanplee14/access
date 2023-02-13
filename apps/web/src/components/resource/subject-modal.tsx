@@ -1,5 +1,5 @@
 import { Modal, ModalProps } from "../common/modal";
-import { LabeledFormControl } from "../labeled-form-control";
+import { LabeledFormControl } from "../common/labeled-form-control";
 import SaveButton from "../common/buttons/save-button";
 import React, { useEffect, useState } from "react";
 import { trpc } from "../../utils/trpc";

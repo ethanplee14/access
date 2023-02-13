@@ -6,7 +6,7 @@ import {
   LinkIcon,
   PencilIcon,
 } from "@heroicons/react/24/outline";
-import { LabeledFormControl } from "../components/labeled-form-control";
+import { LabeledFormControl } from "../components/common/labeled-form-control";
 import StarVote from "../components/common/inputs/star-vote";
 import { trpc } from "../utils/trpc";
 import SubjectSearchInput from "../components/resource/subject-search-input";
