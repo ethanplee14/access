@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import DeleteModal from "../common/modals/delete-modal";
 import { useState } from "react";
 import { Metadata } from "../../server/scripts/meta-fetcher";
+import Image from "next/image";
 
 export interface ResourceCardProps {
   subjectName: string;
@@ -39,7 +40,7 @@ export default function ResourceCard({
     <div className={cardStyle}>
       {resource.meta.image && (
         <figure className={"hidden sm:flex max-h-36 overflow-hidden"}>
-          <img src={resource.meta.image} alt={resource.name} />
+          <Image src={resource.meta.image} alt={resource.name} />
         </figure>
       )}
 
