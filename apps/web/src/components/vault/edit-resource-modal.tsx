@@ -1,6 +1,6 @@
 import { Modal, ModalProps } from "../common/modal";
 import { trpc } from "../../utils/trpc";
-import { LabeledFormControl } from "../labeled-form-control";
+import { LabeledFormControl } from "../common/labeled-form-control";
 import { LinkIcon, PencilIcon, TagIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import SaveButton from "../common/buttons/save-button";
@@ -20,8 +20,8 @@ export default function EditResourceModal(props: EditResourceModalProps) {
   const [name, setName] = useState(props.name);
   const [tags, setTags] = useState(props.tags);
 
-  const subjectQuery = trpc.useQuery(["vault.subject", props.subjectId]);
-  const editResourceMutation = trpc.useMutation("vault.resourceViewer.edit");
+  const subjectQuery = trpc.useQuery(["vault.subject.read", props.subjectId]);
+  const editResourceMutation = trpc.useMutation("vault.resource.edit");
 
   subjectQuery?.data;
   return (

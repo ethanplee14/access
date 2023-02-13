@@ -1,23 +1,22 @@
-import { trpc } from "../../utils/trpc";
-import React, { useEffect, useRef, useState } from "react";
-import { VaultResource, VaultTag } from "@prisma/client";
-import { Descendant } from "slate";
-import Head from "next/head";
-import NavBar from "../nav-bar";
 import {
   ArrowTopRightOnSquareIcon,
   EllipsisVerticalIcon,
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { VaultResource, VaultTag } from "@prisma/client";
+import Head from "next/head";
 import Link from "next/link";
-import RichTextarea from "../common/textarea/rich-textarea";
-import DeleteModal from "../common/modals/delete-modal";
-import EditResourceModal from "./edit-resource-modal";
-import StarVote from "../common/inputs/star-vote";
 import { useRouter } from "next/router";
+import React, { useRef, useState } from "react";
+import { Descendant } from "slate";
 import { Metadata } from "../../server/scripts/meta-fetcher";
-import classNames from "classnames";
+import { trpc } from "../../utils/trpc";
+import StarVote from "../common/inputs/star-vote";
+import DeleteModal from "../common/modals/delete-modal";
+import RichTextarea from "../common/textarea/rich-textarea";
+import NavBar from "../nav-bar";
+import EditResourceModal from "./edit-resource-modal";
 
 export interface VaultResourceViewerProps {
   subjectName: string;
@@ -31,9 +30,9 @@ export default function VaultResourceViewer({
   const router = useRouter();
 
   const trpcCtx = trpc.useContext();
-  const scoreMutation = trpc.useMutation("vault.resourceViewer.updateScore");
-  const reviewMutation = trpc.useMutation("vault.resourceViewer.updateReview");
-  const deleteMutation = trpc.useMutation("vault.resourceViewer.delete");
+  const scoreMutation = trpc.useMutation("vault.resource.updateScore");
+  const reviewMutation = trpc.useMutation("vault.resource.updateReview");
+  const deleteMutation = trpc.useMutation("vault.resource.delete");
 
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -103,9 +102,7 @@ export default function VaultResourceViewer({
               value={resource.score ?? undefined}
               onChange={async (score) => {
                 await scoreMutation.mutateAsync({ resId: resource.id, score });
-                await trpcCtx.invalidateQueries(
-                  "vault.resourceViewer.resourceView"
-                );
+                await trpcCtx.invalidateQueries("vault.resource.view");
               }}
             />
           </div>
@@ -165,7 +162,7 @@ export default function VaultResourceViewer({
         onClose={() => setEditResourceModalOpen(false)}
         onSave={async () =>
           await trpcCtx.invalidateQueries([
-            "vault.resourceViewer.resourceView",
+            "vault.resource.view",
             { resId: resource.id },
           ])
         }

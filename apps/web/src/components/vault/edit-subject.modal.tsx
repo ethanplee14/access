@@ -1,5 +1,5 @@
 import { Modal, ModalProps } from "../common/modal";
-import { LabeledFormControl } from "../labeled-form-control";
+import { LabeledFormControl } from "../common/labeled-form-control";
 import { BookOpenIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { LimitedTextarea } from "../common/textarea/limited-textarea";
@@ -17,7 +17,7 @@ export default function EditSubjectModal(props: EditSubjectModalProps) {
   const [name, setName] = useState(props.subjectName);
   const [about, setAbout] = useState(props.subjectAbout);
 
-  const editSubjectMutation = trpc.useMutation("vault.editSubject");
+  const editSubjectMutation = trpc.useMutation("vault.subject.edit");
 
   return (
     <Modal {...props} title={"Editing subject - " + props.subjectName}>

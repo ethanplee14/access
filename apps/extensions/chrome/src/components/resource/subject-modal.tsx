@@ -17,7 +17,7 @@ export default function SubjectModal(props: SubjectModalProps) {
   const utils = trpc.useContext();
   useEffect(() => setName(props.subjectName ?? ""), [props.subjectName]);
 
-  const createSubjectMutation = trpc.useMutation(["vault.createSubject"]);
+  const createSubjectMutation = trpc.useMutation(["vault.subject.create"]);
 
   return (
     <Modal title={"New Subject"} {...props}>
@@ -50,7 +50,7 @@ export default function SubjectModal(props: SubjectModalProps) {
             if (nameIdMap == undefined) return;
             const subjectData = { name, about };
             await createSubjectMutation.mutateAsync(subjectData);
-            await utils.invalidateQueries(["vault.subjectRecord"]);
+            await utils.invalidateQueries(["vault.subject.record"]);
             reset();
             props.onClose?.();
           }}

@@ -18,10 +18,10 @@ export default function VaultBoard() {
   const router = useRouter();
   const subjectName = router.query.subjectName as string;
   const { isLoading, data: subjectView } = trpc.useQuery([
-    "vault.subjectView",
+    "vault.subject.fullView",
     subjectName,
   ]);
-  const deleteMutation = trpc.useMutation("vault.deleteSubject");
+  const deleteMutation = trpc.useMutation("vault.subject.delete");
   const [editSubjectModalOpen, setSubjectModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 

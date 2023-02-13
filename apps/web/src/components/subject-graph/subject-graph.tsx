@@ -1,4 +1,3 @@
-import { LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import ForceGraph2D, {
@@ -6,23 +5,17 @@ import ForceGraph2D, {
   LinkObject,
   NodeObject,
 } from "react-force-graph-2d";
-import { Point } from "../types/geometry";
-import { trpc } from "../utils/trpc";
-import ContextMenu from "./common/context-menu";
-import LoadingDisplay from "./common/loading-display";
+import { Point } from "../../types/geometry";
+import { trpc } from "../../utils/trpc";
+import LoadingDisplay from "../common/loading-display";
 import GraphSearch from "./graph-search";
+import LinkMenu from "./link-menu";
+import SubjectMenu from "./subject-menu";
 
 export interface SubjectGraphProps {
   width: number;
   height: number;
 }
-
-//Replace NodeObjects with this new type and remove use of any
-type SubjectNode = NodeObject & {
-  id: string;
-  label: string;
-  val: number;
-};
 
 export default function SubjectGraph(props: SubjectGraphProps) {
   const router = useRouter();
@@ -30,7 +23,6 @@ export default function SubjectGraph(props: SubjectGraphProps) {
 
   const { data: subjectData } = trpc.useQuery(["vault.subjectGraph"]);
   const addRelationship = trpc.useMutation(["vault.addRelationship"]);
-  const removeRelationship = trpc.useMutation(["vault.removeRelationship"]);
 
   const [graphData, setGraphData] = useState<
     { nodes: NodeObject[]; links: LinkObject[] } | undefined
@@ -40,14 +32,7 @@ export default function SubjectGraph(props: SubjectGraphProps) {
   const [targetNode, setTargetNode] = useState("");
 
   const ctxNode = useRef("");
-  const ctxLink = useRef<LinkObject>();
-
-  const sortedSubjectNames =
-    subjectData != undefined
-      ? Object.values(subjectData)
-          .map((s) => s.name)
-          .sort((s1, s2) => (s1 < s2 ? -1 : 1))
-      : [];
+  const [linkObject, setLinkObject] = useState<LinkObject>();
 
   useEffect(() => {
     const graphData = parseForceGraphData();
@@ -64,7 +49,7 @@ export default function SubjectGraph(props: SubjectGraphProps) {
         <>
           <div className="absolute p-3 z-10 right-0">
             <GraphSearch
-              selections={sortedSubjectNames}
+              selections={Object.values(subjectData).map((s) => s.name)}
               onSelect={(selection) => {
                 const searchedNode = graphData?.nodes?.find(
                   (n: any) => n.label == selection
@@ -95,7 +80,7 @@ export default function SubjectGraph(props: SubjectGraphProps) {
               ctx.textAlign = "center";
               ctx.textBaseline = "middle";
               ctx.fillStyle = "black";
-              ctx.fillText(node.label, node.x, node.y! + 12);
+              ctx.fillText(node.label, node.x!, node.y! + 12);
             }}
             onNodeClick={(node: any) => {
               if (targetNode) {
@@ -122,66 +107,39 @@ export default function SubjectGraph(props: SubjectGraphProps) {
             }}
             onLinkRightClick={(link, e) => {
               setLinkMenuPos({ x: e.clientX, y: e.clientY });
-              ctxLink.current = link;
+              setLinkObject(link);
             }}
             onBackgroundClick={(e) => {
               setContextMenuPos(undefined);
               setLinkMenuPos(undefined);
             }}
           />
-          {/* Link menu */}
-          <ContextMenu position={linkMenuPos}>
-            <li>
-              <a
-                className="rounded"
-                onClick={(_) => {
-                  const link = ctxLink.current;
-                  // i mighta crossed the names here
-                  removeRelationship.mutateAsync({
-                    parent: ((link?.source as NodeObject).id as string) ?? "",
-                    child: ((link?.target as NodeObject).id as string) ?? "",
-                  });
-                  setGraphData({
-                    nodes: graphData?.nodes ?? [],
-                    links:
-                      graphData?.links?.filter(
-                        (l) =>
-                          l.source != link?.source || l.target != link?.target
-                      ) ?? [],
-                  });
-                  setLinkMenuPos(undefined);
-                  ctxLink.current = undefined;
-                }}
-              >
-                Disconnect
-              </a>
-            </li>
-          </ContextMenu>
-          {/* Subject Menu */}
-          <ContextMenu
+          <LinkMenu
+            linkObject={linkObject}
+            position={linkMenuPos}
+            onDisconnect={() => {
+              const linkIndex =
+                graphData?.links?.findIndex(
+                  (l) =>
+                    l.source == linkObject?.source &&
+                    l.target == linkObject?.target
+                ) ?? -1;
+              setGraphData({
+                nodes: graphData?.nodes ?? [],
+                links: graphData?.links?.splice(linkIndex - 1, 1) ?? [],
+              });
+              setLinkMenuPos(undefined);
+              setLinkObject(undefined);
+            }}
+          />
+          <SubjectMenu
             position={contextMenuPos}
-            onClose={() => setContextMenuPos(undefined)}
-          >
-            <li>
-              <a
-                className={"rounded"}
-                onClick={(_) => {
-                  setTargetNode(ctxNode.current);
-                  setContextMenuPos(undefined);
-                  ctxNode.current = "";
-                }}
-              >
-                <LinkIcon className={"w-5"} />
-                Connect
-              </a>
-            </li>
-            <li>
-              <a className={"rounded hover:bg-error"} onClick={(_) => {}}>
-                <TrashIcon className={"w-5"} />
-                Delete
-              </a>
-            </li>
-          </ContextMenu>
+            onConnect={() => {
+              setTargetNode(ctxNode.current);
+              setContextMenuPos(undefined);
+              ctxNode.current = "";
+            }}
+          />
         </>
       )}
     </>

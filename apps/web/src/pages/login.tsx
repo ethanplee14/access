@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { MouseEventHandler } from "react";
-import { LabeledFormControl } from "../components/labeled-form-control";
+import { LabeledFormControl } from "../components/common/labeled-form-control";
 import NavBar from "../components/nav-bar";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 

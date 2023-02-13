@@ -10,7 +10,7 @@ import getAuthServerSideProps from "../../server/common/get-auth-server-side-pro
 export default function SubjectBoard() {
   const { subjectName } = useRouter().query;
   const { isLoading, data: subjectView } = trpc.useQuery([
-    "vault.subjectView",
+    "vault.subject.fullView",
     subjectName as string,
   ]);
 
