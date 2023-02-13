@@ -40,7 +40,7 @@ export default function fetchMetadata(
           $('meta[property="og:image:url"]').attr("content") ||
           "";
 
-        return { title, description, image };
+        res({ title, description, image });
       });
   });
 }
