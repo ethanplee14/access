@@ -33,7 +33,7 @@ export default function Resource() {
     });
   }, []);
 
-  const subjectsQuery = trpc.useQuery(["vault.subjectRecord"]);
+  const subjectsQuery = trpc.useQuery(["vault.subject.record"]);
   const resourceMutation = trpc.useMutation(["vault.createResource"]);
 
   const subjectNames = useMemo(

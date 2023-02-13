@@ -30,7 +30,7 @@ export default function Resource() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const subjectsQuery = trpc.useQuery(["vault.subjectRecord"]);
+  const subjectsQuery = trpc.useQuery(["vault.subject.record"]);
   const resourceMutation = trpc.useMutation(["vault.createResource"]);
 
   const subjectNames = useMemo(

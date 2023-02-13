@@ -20,7 +20,7 @@ export default function EditResourceModal(props: EditResourceModalProps) {
   const [name, setName] = useState(props.name);
   const [tags, setTags] = useState(props.tags);
 
-  const subjectQuery = trpc.useQuery(["vault.subject", props.subjectId]);
+  const subjectQuery = trpc.useQuery(["vault.subject.read", props.subjectId]);
   const editResourceMutation = trpc.useMutation("vault.resourceViewer.edit");
 
   subjectQuery?.data;

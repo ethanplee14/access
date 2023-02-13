@@ -17,7 +17,7 @@ export default function EditSubjectModal(props: EditSubjectModalProps) {
   const [name, setName] = useState(props.subjectName);
   const [about, setAbout] = useState(props.subjectAbout);
 
-  const editSubjectMutation = trpc.useMutation("vault.editSubject");
+  const editSubjectMutation = trpc.useMutation("vault.subject.edit");
 
   return (
     <Modal {...props} title={"Editing subject - " + props.subjectName}>
