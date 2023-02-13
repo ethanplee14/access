@@ -39,13 +39,21 @@ export default function ResourceCard({
   return (
     <div className={cardStyle}>
       {resource.meta.image && (
-        <figure className={"hidden sm:flex max-h-36 overflow-hidden"}>
-          <Image src={resource.meta.image} alt={resource.name} />
-        </figure>
+        // <figure className={"hidden sm:flex max-h-36 overflow-hidden"}>
+        <div className="h-36 relative">
+          <Image
+            src={resource.meta.image}
+            alt={resource.name}
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
+
+        // </figure>
       )}
 
       <div className="card-body h-full overflow-auto py-2 px-4 gap-0">
-        <div className="card-title">
+        <div className="card-title text-sm">
           <Link href={resource.url}>
             <a
               target={"_blank"}
@@ -53,12 +61,11 @@ export default function ResourceCard({
               title={resource.url}
             >
               {resource.name || resource.meta.title}{" "}
-              <ArrowTopRightOnSquareIcon className={"w-3 inline-block mb-1"} />
             </a>
           </Link>
         </div>
         <TagsBar />
-        <p className={"text-sm py-4"}>{resource.meta.description}</p>
+        <p className={"text-xs py-4"}>{resource.meta.description}</p>
         <div className={"flex text-gray-500 gap-2"}>
           <div className="tooltip z-50" data-tip="Overview">
             <button
