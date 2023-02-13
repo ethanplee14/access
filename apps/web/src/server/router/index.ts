@@ -3,7 +3,7 @@ import { createRouter } from "./context";
 import superjson from "superjson";
 import { subjectRouter } from "./subject";
 import { vaultRouter } from "./vault";
-import { resourceViewerRouter } from "./vault/resource-viewer";
+import { vaultResourceRoutr } from "./vault/resource";
 import { vaultSubjectRouter } from "./vault/subject";
 
 export const appRouter = createRouter()
@@ -13,7 +13,7 @@ export const appRouter = createRouter()
     "vault.",
     vaultRouter
       .merge("subject.", vaultSubjectRouter)
-      .merge("resourceViewer.", resourceViewerRouter)
+      .merge("resource.", vaultResourceRoutr)
   );
 
 // export type definition of API

@@ -8,12 +8,12 @@ import fetchMetadata from "../../scripts/meta-fetcher";
  *  Doesn't do any kind of user ownership verification. Consider using middleware for verifying access
  *  to resource
  */
-export const resourceViewerRouter = createProtectedRouter()
+export const vaultResourceRoutr = createProtectedRouter()
   .middleware(async ({ ctx, rawInput, next }) => {
     //Do subject and resId validation here.
     return next({ ctx });
   })
-  .query("resourceView", {
+  .query("view", {
     input: z.object({
       resId: z.string(),
     }),

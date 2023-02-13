@@ -10,7 +10,7 @@ export default function ResourceView() {
   const { subjectName, resId } = useRouter().query;
 
   const resourceQuery = trpc.useQuery([
-    "vault.resourceViewer.resourceView",
+    "vault.resource.view",
     { resId: resId as string },
   ]);
 
