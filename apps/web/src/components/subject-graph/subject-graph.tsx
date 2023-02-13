@@ -1,6 +1,5 @@
-import { LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ForceGraph2D, {
   ForceGraphMethods,
   LinkObject,
@@ -8,7 +7,6 @@ import ForceGraph2D, {
 } from "react-force-graph-2d";
 import { Point } from "../../types/geometry";
 import { trpc } from "../../utils/trpc";
-import ContextMenu from "../common/context-menu";
 import LoadingDisplay from "../common/loading-display";
 import GraphSearch from "./graph-search";
 import LinkMenu from "./link-menu";
