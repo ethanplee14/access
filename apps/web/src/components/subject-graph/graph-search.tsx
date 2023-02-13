@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import SearchInput from "../common/inputs/search-input";
 
 export interface GraphSearchProps {
@@ -10,6 +10,11 @@ export interface GraphSearchProps {
 export default function GraphSearch(props: GraphSearchProps) {
   const [opened, setOpened] = useState(false);
   const [selection, setSelection] = useState("");
+
+  const sortedSelections = useMemo(() => {
+    if (!props.selections) return [];
+    return props.selections.sort((s1, s2) => (s1 < s2 ? -1 : 1));
+  }, [props.selections]);
 
   return (
     <div>
@@ -25,7 +30,7 @@ export default function GraphSearch(props: GraphSearchProps) {
           <SearchInput
             value={selection}
             className="input-sm"
-            selections={props.selections}
+            selections={sortedSelections}
             placeholder="Search subject..."
             autofocus={true}
             onSelect={(selection) => {

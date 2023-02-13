@@ -19,20 +19,12 @@ export interface SubjectGraphProps {
   height: number;
 }
 
-//Replace NodeObjects with this new type and remove use of any
-type SubjectNode = NodeObject & {
-  id: string;
-  label: string;
-  val: number;
-};
-
 export default function SubjectGraph(props: SubjectGraphProps) {
   const router = useRouter();
   const forceGraph = useRef<ForceGraphMethods>();
 
   const { data: subjectData } = trpc.useQuery(["vault.subjectGraph"]);
   const addRelationship = trpc.useMutation(["vault.addRelationship"]);
-  const removeRelationship = trpc.useMutation(["vault.removeRelationship"]);
 
   const [graphData, setGraphData] = useState<
     { nodes: NodeObject[]; links: LinkObject[] } | undefined
@@ -43,13 +35,6 @@ export default function SubjectGraph(props: SubjectGraphProps) {
 
   const ctxNode = useRef("");
   const [linkObject, setLinkObject] = useState<LinkObject>();
-
-  const sortedSubjectNames = useMemo(() => {
-    if (!subjectData) return [];
-    return Object.values(subjectData)
-      .map((subject) => subject.name)
-      .sort((s1, s2) => (s1 < s2 ? -1 : 1));
-  }, [subjectData]);
 
   useEffect(() => {
     const graphData = parseForceGraphData();
@@ -66,7 +51,7 @@ export default function SubjectGraph(props: SubjectGraphProps) {
         <>
           <div className="absolute p-3 z-10 right-0">
             <GraphSearch
-              selections={sortedSubjectNames}
+              selections={Object.values(subjectData).map((s) => s.name)}
               onSelect={(selection) => {
                 const searchedNode = graphData?.nodes?.find(
                   (n: any) => n.label == selection
@@ -135,14 +120,15 @@ export default function SubjectGraph(props: SubjectGraphProps) {
             linkObject={linkObject}
             position={linkMenuPos}
             onDisconnect={() => {
+              const linkIndex =
+                graphData?.links?.findIndex(
+                  (l) =>
+                    l.source == linkObject?.source &&
+                    l.target == linkObject?.target
+                ) ?? -1;
               setGraphData({
                 nodes: graphData?.nodes ?? [],
-                links:
-                  graphData?.links?.filter(
-                    (l) =>
-                      l.source != linkObject?.source ||
-                      l.target != linkObject?.target
-                  ) ?? [],
+                links: graphData?.links?.splice(linkIndex - 1, 1) ?? [],
               });
               setLinkMenuPos(undefined);
               setLinkObject(undefined);
