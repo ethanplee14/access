@@ -31,7 +31,7 @@ export default function Login() {
   return (
     <div>
       <NavBar />
-      <div className="rounded p-10 w-112 mx-auto">
+      <div className="rounded p-10 w-full md:w-112 mx-auto">
         <div className="flex flex-col gap-4">
           <h3 className={"font-semibold font-mono text-lg"}>Login with</h3>
           <LabeledFormControl label={"Email"}>
