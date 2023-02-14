@@ -67,7 +67,7 @@ export default function VaultBoard() {
               </h1>
               <p>{subjectView.subject.about}</p>
             </div>
-            <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+            <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {resourceCards()}
             </div>
             <DeleteModal
