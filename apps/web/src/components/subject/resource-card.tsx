@@ -31,15 +31,15 @@ export default function ResourceCard({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const cardStyle = classNames(
-    "card w-full h-96 shadow-lg border border-gray-200",
+    "card w-full h-50 shadow-lg border border-gray-200",
     className
   );
   const iconBtnStyle = "btn btn-ghost btn-square btn-xs hover:text-neutral";
+  const resourceURL = new URL(resource.url);
 
   return (
     <div className={cardStyle}>
       {resource.meta.image && (
-        // <figure className={"hidden sm:flex max-h-36 overflow-hidden"}>
         <div className="h-36 relative">
           <Image
             src={resource.meta.image}
@@ -48,37 +48,27 @@ export default function ResourceCard({
             objectFit="cover"
           />
         </div>
-
-        // </figure>
       )}
 
       <div className="card-body h-full overflow-auto py-2 px-4 gap-0">
-        <div className="card-title text-sm">
+        <div className="text-sm mb-2">
+          <Link href={`/vault/${subjectName.toLowerCase()}/${resource.id}`}>
+            <a className={"font-semibold hover:underline"} title={resource.url}>
+              {resource.name || resource.meta.title}{" "}
+            </a>
+          </Link>
           <Link href={resource.url}>
             <a
-              target={"_blank"}
-              className={"hover:underline"}
-              title={resource.url}
+              target="_blank"
+              className="text-xs text-gray-500 hover:underline"
             >
-              {resource.name || resource.meta.title}{" "}
+              ({resourceURL.hostname})
             </a>
           </Link>
         </div>
         <TagsBar />
         <p className={"text-xs py-4"}>{resource.meta.description}</p>
-        <div className={"flex text-gray-500 gap-2"}>
-          <div className="tooltip z-50" data-tip="Overview">
-            <button
-              className={iconBtnStyle}
-              onClick={() =>
-                router.push(
-                  `/vault/${subjectName.toLowerCase()}/${resource.id}`
-                )
-              }
-            >
-              <DocumentTextIcon className={"w-5"} />
-            </button>
-          </div>
+        <div className={"text-gray-500 gap-2 text-right"}>
           <div className="tooltip tooltip-error" data-tip={"Delete"}>
             <button
               className={iconBtnStyle + " hover:bg-error"}
