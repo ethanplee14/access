@@ -3,17 +3,17 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
-  provider             = "mysql"
+  provider     = "mysql"
   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.text annotations in model Account below
   // Further reading: 
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Subject {
@@ -33,6 +33,8 @@ model Tag {
   subjectId String
   subject   Subject    @relation(fields: [subjectId], references: [id])
   resources Resource[]
+
+  @@index([subjectId])
 }
 
 model Resource {
@@ -46,6 +48,9 @@ model Resource {
   subjectId String
   subject   Subject  @relation(fields: [subjectId], references: [id])
   tags      Tag[]
+
+  @@index([userId])
+  @@index([subjectId])
 }
 
 model Review {
@@ -57,6 +62,9 @@ model Review {
   createdAt  DateTime @default(now())
   resourceId String
   resource   Resource @relation(fields: [resourceId], references: [id])
+
+  @@index([userId])
+  @@index([resourceId])
 }
 
 model VaultSubject {
@@ -81,6 +89,8 @@ model VaultTag {
   subjectId String
   subject   VaultSubject    @relation(fields: [subjectId], references: [id])
   resources VaultResource[]
+
+  @@index([subjectId])
 }
 
 model VaultResource {
@@ -93,6 +103,8 @@ model VaultResource {
   subjectId String
   subject   VaultSubject @relation(fields: [subjectId], references: [id])
   tags      VaultTag[]
+
+  @@index([subjectId])
 }
 
 // Necessary for Next auth
@@ -112,6 +124,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -120,6 +133,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
