@@ -31,7 +31,7 @@ export default function Resource() {
   const router = useRouter();
 
   const subjectsQuery = trpc.useQuery(["vault.subject.record"]);
-  const resourceMutation = trpc.useMutation(["vault.createResource"]);
+  const resourceMutation = trpc.useMutation(["vault.resource.create"]);
 
   const subjectNames = useMemo(
     () => Object.keys(subjectsQuery.data ?? {}),
