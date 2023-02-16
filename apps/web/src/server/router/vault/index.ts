@@ -33,6 +33,7 @@ export const vaultRouter = createProtectedRouter()
     async resolve({ ctx, input }) {
       const subjectSearch = ctx.prisma.vaultSubject.findMany({
         where: { name: { search: input + "*" }, userId: ctx.session.user.id },
+        take: 5,
       });
       const resourceSearch = ctx.prisma.vaultResource.findMany({
         where: {
@@ -40,9 +41,15 @@ export const vaultRouter = createProtectedRouter()
             { name: { search: input + "*" } },
             { review: { search: input + "*" } },
           ],
+          userId: ctx.session.user.id,
         },
+        take: 5,
       });
-      return Promise.all([subjectSearch, resourceSearch]);
+      const searchResults = await Promise.all([subjectSearch, resourceSearch]);
+      return {
+        subjects: [searchResults[0].map((s) => s.name)],
+        resources: [searchResults[1].map((s) => s.name)],
+      };
     },
   })
   .mutation("addRelationship", {
