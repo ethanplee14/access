@@ -9,13 +9,7 @@ import {
 import SearchInput from "./common/inputs/search-input";
 import { useState } from "react";
 
-export default function NavBar({
-  subjects,
-  onSearch,
-}: {
-  subjects?: string[];
-  onSearch?: (subject: string) => void;
-}) {
+export default function NavBar({ subjects }: { subjects?: string[] }) {
   const { status } = useSession();
   const [searchSubject, setSearchSubject] = useState("");
 
@@ -28,7 +22,7 @@ export default function NavBar({
           </Link>
         </h1>
         <div className="flex-1">
-          {/* <div className="w-2/3 mx-auto">
+          <div className="w-2/3 mx-auto">
             <SearchInput
               label={<MagnifyingGlassIcon className="w-5 h-5" />}
               className="input-sm"
@@ -37,10 +31,9 @@ export default function NavBar({
               onChange={(e) => setSearchSubject(e.target.value)}
               onSelect={(subj) => {
                 setSearchSubject(subj);
-                onSearch?.(subj);
               }}
             />
-          </div> */}
+          </div>
         </div>
         {status == "unauthenticated" ? <LoginBar /> : <NavigationOptions />}
       </div>

@@ -29,6 +29,10 @@ export const vaultRouter = createProtectedRouter()
       return subjectGraph;
     },
   })
+  .query("search", {
+    input: z.string(),
+    async resolve({ ctx, input }) {},
+  })
   .mutation("addRelationship", {
     input: z.object({
       parent: z.string(),
