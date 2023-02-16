@@ -31,7 +31,15 @@ export const vaultRouter = createProtectedRouter()
   })
   .query("search", {
     input: z.string(),
-    async resolve({ ctx, input }) {},
+    async resolve({ ctx, input }) {
+      const subjects = await ctx.prisma.vaultSubject.findMany({
+        where: {
+          name: {
+            search: input + "*",
+          },
+        },
+      });
+    },
   })
   .mutation("addRelationship", {
     input: z.object({
