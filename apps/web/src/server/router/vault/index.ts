@@ -1,6 +1,4 @@
 import { VaultSubject } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { TRPC_ERROR_CODES_BY_KEY } from "@trpc/server/rpc";
 import { z } from "zod";
 import { createProtectedRouter } from "../context";
 
@@ -33,6 +31,10 @@ export const vaultRouter = createProtectedRouter()
   .query("search", {
     input: z.string().trim().min(1),
     async resolve({ ctx, input }) {
+      console.log("Test");
+
+      console.log(input);
+
       const subjectSearch = ctx.prisma.vaultSubject.findMany({
         where: { name: { search: input + "*" }, userId: ctx.session.user.id },
         take: 5,
