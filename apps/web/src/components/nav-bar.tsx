@@ -6,8 +6,9 @@ import {
   ArrowLeftOnRectangleIcon,
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
-import SearchInput from "./common/inputs/search-input";
+import FilterSearchInput from "./common/inputs/filter-search-input";
 import { useState } from "react";
+import VaultSearch from "./vault/vault-search";
 
 export default function NavBar({ subjects }: { subjects?: string[] }) {
   const { status } = useSession();
@@ -23,16 +24,7 @@ export default function NavBar({ subjects }: { subjects?: string[] }) {
         </h1>
         <div className="flex-1">
           <div className="w-2/3 mx-auto">
-            <SearchInput
-              label={<MagnifyingGlassIcon className="w-5 h-5" />}
-              className="input-sm"
-              value={searchSubject}
-              selections={subjects}
-              onChange={(e) => setSearchSubject(e.target.value)}
-              onSelect={(subj) => {
-                setSearchSubject(subj);
-              }}
-            />
+            <VaultSearch />
           </div>
         </div>
         {status == "unauthenticated" ? <LoginBar /> : <NavigationOptions />}

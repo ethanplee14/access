@@ -1,25 +1,26 @@
-import React, { ReactNode, useState } from "react";
-import { roundRange } from "../../../utils/math";
-import classNames from "classnames";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import classNames from "classnames";
+import { ReactNode, useState } from "react";
+import { roundRange } from "../../../utils/math";
 
 export interface SearchInputProps {
   value?: string;
-  selections?: string[];
+  selections?: ReactNode[];
   label?: ReactNode;
   emptyDisplay?: ReactNode;
   className?: string;
+  isLoading?: boolean;
   autofocus?: boolean;
   placeholder?: string;
+  activeSelection?: number;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  onSelect?: (selection: string) => void;
+  onSelect?: (selectIndex: number) => void;
 }
 
 export default function SearchInput(props: SearchInputProps) {
-  const [filteredSelections, setFilteredSelections] = useState<string[]>(
-    props.selections ?? []
+  const [activeSelection, setActiveSelection] = useState(
+    props.activeSelection ?? 0
   );
-  const [activeSelection, setActiveSelection] = useState(-1);
 
   const inputComp = (
     <input
@@ -30,7 +31,10 @@ export default function SearchInput(props: SearchInputProps) {
       onKeyDown={keyDownHandler}
       value={props.value}
       autoFocus={props.autofocus}
-      onChange={onChangeHandler}
+      onChange={(e) => {
+        setActiveSelection(0);
+        props.onChange?.(e);
+      }}
     />
   );
 
@@ -48,35 +52,41 @@ export default function SearchInput(props: SearchInputProps) {
         tabIndex={0}
         className="absolute mt-2 p-2 shadow menu menu-compact dropdown-content bg-base-300 rounded-lg  w-full max-h-48 overflow-y-auto flex-nowrap"
       >
-        {filteredSelections.length == 0 ? (
-          <li>
-            <a>
-              <InformationCircleIcon className={"w-5"} /> Type to search!
-            </a>
-          </li>
-        ) : (
-          filteredSelections.map((s, i) => (
-            <li
-              key={"search-" + s}
-              className="w-full"
-              onClick={(e) => {
-                e.currentTarget?.parentElement?.blur();
-                props.onSelect?.(s);
-              }}
-            >
-              <a className={activeSelection == i ? "active" : ""}>{s}</a>
-            </li>
-          ))
-        )}
+        {renderDropdown()}
       </ul>
     </div>
   );
 
+  function renderDropdown() {
+    if (props.isLoading) {
+      return <button className="btn btn-sm btn-ghost loading" />;
+    }
+    if (props.value?.length == 0) {
+      return (
+        <li>
+          <a>
+            <InformationCircleIcon className={"w-5"} /> Type to search
+          </a>
+        </li>
+      );
+    }
+    return props.selections?.map((s, i) => (
+      <li
+        key={"search-" + s}
+        className="w-full"
+        onClick={(e) => {
+          e.currentTarget?.parentElement?.blur();
+          props.onSelect?.(i);
+        }}
+      >
+        <a className={activeSelection == i ? "active" : ""}>{s}</a>
+      </li>
+    ));
+  }
+
   function keyDownHandler(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key == "Enter") {
-      if (filteredSelections[activeSelection]) {
-        props.onSelect?.(filteredSelections[activeSelection]!);
-      }
+      props.onSelect?.(activeSelection);
       e.currentTarget.blur();
       return;
     }
@@ -86,18 +96,7 @@ export default function SearchInput(props: SearchInputProps) {
     else if (e.key == "ArrowUp") newSelection--;
 
     setActiveSelection(
-      roundRange(newSelection, [-1, filteredSelections.length])
+      roundRange(newSelection, [-1, props.selections?.length ?? 0])
     );
-  }
-
-  function onChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    const newInputVal = e.target.value;
-    props.onChange?.(e);
-    setActiveSelection(0);
-
-    const selectionFilter = (s: string) =>
-      s.toLowerCase().startsWith(newInputVal.toLowerCase());
-    const filteredSelection = props.selections?.filter(selectionFilter);
-    setFilteredSelections(filteredSelection ?? []);
   }
 }
