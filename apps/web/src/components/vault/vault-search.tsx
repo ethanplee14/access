@@ -1,10 +1,9 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { ReactElement, useEffect, useMemo, useState } from "react";
 import { trpc } from "../../utils/trpc";
 import SearchInput from "../common/inputs/search-input";
-
-type SearchType = "SUBJECT" | "RESOURCE";
 
 export default function VaultSearch() {
   const router = useRouter();
@@ -15,42 +14,55 @@ export default function VaultSearch() {
     refetch,
     isLoading,
     isRefetching,
-  } = trpc.useQuery(["vault.search", "wri"], {
+  } = trpc.useQuery(["vault.search", searchStr], {
     initialData: { subjects: [], resources: [] },
     refetchOnWindowFocus: false,
-    enabled: false,
+    enabled: Boolean(searchStr),
   });
 
-  const searchEntries = buildSearchEntries();
-  console.log(searchStr);
+  const searchSelections = useMemo(buildSearchSelections, [searchData]);
 
-  console.log(searchEntries);
-
+  useEffect(() => {
+    if (!searchStr) return;
+    refetch();
+    // should put a cooldown timer here. I guess the official term is debounce. Some callback methods but can probably work with setTimeout as well.
+  }, [searchStr]);
   return (
     <SearchInput
       label={<MagnifyingGlassIcon className="w-5 h-5" />}
+      placeholder="Search vault..."
       className="input-sm"
       value={searchStr}
       isLoading={isLoading || isRefetching}
-      onChange={(e) => {
-        setSearchStr(e.target.value);
-        refetch().then(console.log);
-      }}
+      onChange={(e) => setSearchStr(e.target.value)}
+      selections={searchSelections}
+      onSelect={(i) => router.push(searchSelections[i]?.props["href"])}
     />
   );
 
-  function buildSearchEntries() {
+  function buildSearchSelections() {
     if (!searchData) return [];
 
-    const results: (readonly string[])[] = [];
+    const entries: ReactElement[] = [];
 
     searchData["subjects"].forEach((s) =>
-      results.push([s, "SUBJECT"] as const)
+      entries.push(
+        <Link href={`/vault/${s.toLowerCase()}`}>
+          <span>
+            {s} <span className="text-gray-500 text-xs">(Subject)</span>
+          </span>
+        </Link>
+      )
     );
-    searchData["resources"].forEach((r) =>
-      results.push([r, "RESOURCE"] as const)
-    );
-
-    return results;
+    searchData["resources"].forEach((r) => {
+      entries.push(
+        <Link href={`/vault/${r.subjectName.toLowerCase()}/${r.id}`}>
+          <span>
+            {r.name} <span className="text-gray-400 text-xs">(Resource)</span>
+          </span>
+        </Link>
+      );
+    });
+    return entries;
   }
 }

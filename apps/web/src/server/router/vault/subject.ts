@@ -78,7 +78,6 @@ export const vaultSubjectRouter = createProtectedRouter()
         id: string;
         name: string;
       };
-      console.log(subjects.map((s) => s.name));
       const subjectRecord: Record<string, SelectedSubjectFields> = {};
       subjects.forEach((s) => (subjectRecord[s.name] = s));
       return subjectRecord;

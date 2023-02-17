@@ -1,4 +1,7 @@
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import {
+  InformationCircleIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import { ReactNode, useState } from "react";
 import { roundRange } from "../../../utils/math";
@@ -63,16 +66,26 @@ export default function SearchInput(props: SearchInputProps) {
     }
     if (props.value?.length == 0) {
       return (
-        <li>
+        <li className="">
           <a>
-            <InformationCircleIcon className={"w-5"} /> Type to search
+            <InformationCircleIcon className={"w-5"} />
+            <div className="flex-1">Type to search</div>
           </a>
         </li>
       );
     }
+    if (!props.selections || props.selections.length == 0)
+      return (
+        <li>
+          <a>
+            <XCircleIcon className="w-5 h-5" />
+            <div className="flex-1">No results matched your search.</div>
+          </a>
+        </li>
+      );
     return props.selections?.map((s, i) => (
       <li
-        key={"search-" + s}
+        key={"search-" + i}
         className="w-full"
         onClick={(e) => {
           e.currentTarget?.parentElement?.blur();
