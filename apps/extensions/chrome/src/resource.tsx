@@ -34,7 +34,7 @@ export default function Resource() {
   }, []);
 
   const subjectsQuery = trpc.useQuery(["vault.subject.record"]);
-  const resourceMutation = trpc.useMutation(["vault.createResource"]);
+  const resourceMutation = trpc.useMutation(["vault.resource.create"]);
 
   const subjectNames = useMemo(
     //not sure why react-query data returns a json key/value. Might have to do with AppRouter being type any.

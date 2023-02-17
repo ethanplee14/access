@@ -1,6 +1,6 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { useMemo, useState } from "react";
-import SearchInput from "../common/inputs/search-input";
+import FilterSearchInput from "../common/inputs/filter-search-input";
 
 export interface GraphSearchProps {
   selections?: string[];
@@ -27,7 +27,7 @@ export default function GraphSearch(props: GraphSearchProps) {
         </button>
       ) : (
         <div className="input-group">
-          <SearchInput
+          <FilterSearchInput
             value={selection}
             className="input-sm"
             selections={sortedSelections}

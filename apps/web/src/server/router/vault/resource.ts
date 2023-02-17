@@ -1,6 +1,7 @@
 import { createProtectedRouter } from "../context";
 import { z } from "zod";
 import fetchMetadata from "../../scripts/meta-fetcher";
+import { createResourceValidator } from "../validators/resource";
 
 /**
  * TODO:
@@ -8,7 +9,7 @@ import fetchMetadata from "../../scripts/meta-fetcher";
  *  Doesn't do any kind of user ownership verification. Consider using middleware for verifying access
  *  to resource
  */
-export const vaultResourceRoutr = createProtectedRouter()
+export const vaultResourceRouter = createProtectedRouter()
   .middleware(async ({ ctx, rawInput, next }) => {
     //Do subject and resId validation here.
     return next({ ctx });
@@ -31,6 +32,53 @@ export const vaultResourceRoutr = createProtectedRouter()
         console.log("Failed to lookup meta data for: " + resource.url);
       }
       return { ...resource, meta };
+    },
+  })
+  .mutation("create", {
+    input: createResourceValidator,
+    async resolve({ ctx, input }) {
+      const subjectCompositeId = {
+        userId_name: {
+          userId: ctx.session.user.id,
+          name: input.subjectName,
+        },
+      };
+      const { tags: existingTags } =
+        await ctx.prisma.vaultSubject.findUniqueOrThrow({
+          where: subjectCompositeId,
+          select: { tags: { select: { name: true } } },
+        });
+      const missingTags = input.tags.filter(
+        (t) => !existingTags.map((et) => et.name).includes(t)
+      );
+      const { tags } = await ctx.prisma.vaultSubject.update({
+        where: subjectCompositeId,
+        data: {
+          tags: { create: missingTags.map((t) => ({ name: t })) },
+        },
+        select: {
+          tags: { select: { id: true, name: true } },
+        },
+      });
+      const tagDict: Record<string, string> = {};
+      tags.forEach((tag) => (tagDict[tag.name] = tag.id));
+      const tagIds = input.tags.map((t) => ({ id: tagDict[t] }));
+
+      return ctx.prisma.vaultSubject.update({
+        where: subjectCompositeId,
+        data: {
+          resources: {
+            create: {
+              name: input.name,
+              url: input.url,
+              score: input.review?.score,
+              review: input.review?.comment,
+              tags: { connect: tagIds },
+              userId: ctx.session.user.id,
+            },
+          },
+        },
+      });
     },
   })
   .mutation("edit", {

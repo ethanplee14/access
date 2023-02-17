@@ -20,3 +20,4 @@ mysql db url and nextauth configurations.
 - [iframe usage specifications](https://blog.bitsrc.io/best-practices-in-using-iframes-with-react-6193feaa1e08)
 - Raindrop uses iframes a bit differently from a preview.system source. They can load web pages even if it's blocked by iframe policy.... sus. investigate further. Will put iframe system on hold for now.
 - [Keysely - If ever need to phase out prisma](https://github.com/depot/kysely-planetscale)
+- PDF viewer [https://projects.wojtekmaj.pl/react-pdf/]

@@ -1,7 +1,6 @@
 import { VaultSubject } from "@prisma/client";
 import { z } from "zod";
 import { createProtectedRouter } from "../context";
-import { createResourceValidator } from "../validators/resource";
 
 export const vaultRouter = createProtectedRouter()
   .query("subjectGraph", {
@@ -27,6 +26,37 @@ export const vaultRouter = createProtectedRouter()
         };
       });
       return subjectGraph;
+    },
+  })
+  .query("search", {
+    input: z.string().trim().min(1),
+    async resolve({ ctx, input }) {
+      const subjectSearch = ctx.prisma.vaultSubject.findMany({
+        where: { name: { search: input + "*" }, userId: ctx.session.user.id },
+        take: 5,
+      });
+      const resourceSearch = ctx.prisma.vaultResource.findMany({
+        where: {
+          OR: [
+            { name: { search: input + "*" } },
+            { review: { search: input + "*" } },
+          ],
+          userId: ctx.session.user.id,
+        },
+        include: {
+          subject: { select: { name: true } },
+        },
+        take: 5,
+      });
+      const searchResults = await Promise.all([subjectSearch, resourceSearch]);
+      return {
+        subjects: searchResults[0].map((s) => s.name),
+        resources: searchResults[1].map((r) => ({
+          name: r.name,
+          id: r.id,
+          subjectName: r.subject.name,
+        })),
+      };
     },
   })
   .mutation("addRelationship", {
@@ -66,52 +96,6 @@ export const vaultRouter = createProtectedRouter()
         data: {
           children: {
             disconnect: { id: input.child },
-          },
-        },
-      });
-    },
-  })
-  .mutation("createResource", {
-    input: createResourceValidator,
-    async resolve({ ctx, input }) {
-      const subjectCompositeId = {
-        userId_name: {
-          userId: ctx.session.user.id,
-          name: input.subjectName,
-        },
-      };
-      const { tags: existingTags } =
-        await ctx.prisma.vaultSubject.findUniqueOrThrow({
-          where: subjectCompositeId,
-          select: { tags: { select: { name: true } } },
-        });
-      const missingTags = input.tags.filter(
-        (t) => !existingTags.map((et) => et.name).includes(t)
-      );
-      const { tags } = await ctx.prisma.vaultSubject.update({
-        where: subjectCompositeId,
-        data: {
-          tags: { create: missingTags.map((t) => ({ name: t })) },
-        },
-        select: {
-          tags: { select: { id: true, name: true } },
-        },
-      });
-      const tagDict: Record<string, string> = {};
-      tags.forEach((tag) => (tagDict[tag.name] = tag.id));
-      const tagIds = input.tags.map((t) => ({ id: tagDict[t] }));
-
-      return ctx.prisma.vaultSubject.update({
-        where: subjectCompositeId,
-        data: {
-          resources: {
-            create: {
-              name: input.name,
-              url: input.url,
-              score: input.review?.score,
-              review: input.review?.comment,
-              tags: { connect: tagIds },
-            },
           },
         },
       });

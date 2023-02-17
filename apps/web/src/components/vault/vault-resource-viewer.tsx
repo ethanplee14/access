@@ -148,7 +148,7 @@ export default function VaultResourceViewer({
         target={resource.name}
         onClose={() => setDeleteModalOpen(false)}
         onConfirmed={async () => {
-          await deleteMutation.mutateAsync({ resId: resource.id });
+          deleteMutation.mutate({ resId: resource.id });
           await router.push("/vault/" + subjectName.toLowerCase());
         }}
       />
