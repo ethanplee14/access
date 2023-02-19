@@ -37,6 +37,7 @@ export default function SubjectGraph(props: SubjectGraphProps) {
   useEffect(() => {
     const graphData = parseForceGraphData();
     if (graphData) setGraphData(graphData);
+    forceGraph.current?.d3Force("charge")?.distanceMax(150);
   }, [subjectData]);
 
   return (

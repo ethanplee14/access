@@ -1,18 +1,15 @@
-import Link from "next/link";
-import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/20/solid";
-import { signOut, useSession } from "next-auth/react";
+import { UserCircleIcon } from "@heroicons/react/20/solid";
 import {
   ArchiveBoxIcon,
   ArrowLeftOnRectangleIcon,
   DocumentPlusIcon,
 } from "@heroicons/react/24/outline";
-import FilterSearchInput from "./common/inputs/filter-search-input";
-import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 import VaultSearch from "./vault/vault-search";
 
-export default function NavBar({ subjects }: { subjects?: string[] }) {
+export default function NavBar() {
   const { status } = useSession();
-  const [searchSubject, setSearchSubject] = useState("");
 
   return (
     <nav className={"px-10 py-2 shadow-sm border-b border-gray-300"}>
