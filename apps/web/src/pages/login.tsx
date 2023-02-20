@@ -34,7 +34,7 @@ export default function Login() {
       <div className="rounded p-10 w-full md:w-112 mx-auto">
         <div className="flex flex-col gap-4">
           <h3 className={"font-semibold font-mono text-lg"}>Login with</h3>
-          <LabeledFormControl label={"Email"}>
+          {/* <LabeledFormControl label={"Email"}>
             <label className="input-group">
               <span>
                 <EnvelopeIcon className={"w-5"} />
@@ -56,7 +56,7 @@ export default function Login() {
 
           <div className="divider" />
 
-          <h3 className="font-semibold font-mono">Or with</h3>
+          <h3 className="font-semibold font-mono">Or with</h3> */}
           <div className="flex gap-2">
             <SocialButton
               svgPath={"/icons/google-logo.svg"}
