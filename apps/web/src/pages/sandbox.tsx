@@ -1,8 +1,8 @@
+import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 export default function Sandbox() {
-  const { data } = trpc.useQuery(["vault.search", "writ"]);
-  console.log(data);
+  const { data, status } = useSession();
 
-  return <div>{JSON.stringify(data)}</div>;
+  return <div>{data?.user?.id}</div>;
 }
