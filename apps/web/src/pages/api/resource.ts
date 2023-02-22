@@ -5,7 +5,6 @@ import { authOptions as nextAuthOptions } from "./auth/[...nextauth]";
 
 const createResource = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method != "POST") res.status(405).send("Not allowed");
-
   const session = await getServerSession(req, res, nextAuthOptions);
   if (!session || !session.user) {
     res.status(403).send({
@@ -19,7 +18,8 @@ const createResource = async (req: NextApiRequest, res: NextApiResponse) => {
     they can send files to other people's resource folders. Trying to figure out how to transform multipart/form-data before it's forwarded. 
     Will keep it like this until further investigations. 
   */
-  const FS_URL = "http://107.155.121.13:8080";
+  const FS_URL = process.env.FS_URL;
+
   const uploadRes = await fetch(FS_URL + "/upload", {
     method: "POST",
     headers: {
@@ -27,6 +27,8 @@ const createResource = async (req: NextApiRequest, res: NextApiResponse) => {
       Authorization: "Bearer " + process.env.FS_TOKEN,
     },
     body: req as any,
+    //sending entire req instead of req.body because body parser is false. If body parser
+    //is true, data is stored in body but we want to send the entire request over.
   });
 
   if (!uploadRes.ok || !uploadRes.body)
