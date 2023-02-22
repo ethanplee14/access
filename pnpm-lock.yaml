@@ -77,7 +77,7 @@ importers:
       autoprefixer: ^10.4.8
       cheerio: ^1.0.0-rc.12
       classnames: ^2.3.1
-      daisyui: ^2.27.0
+      daisyui: ^2.50.2
       eslint: ^8.25.0
       eslint-config-next: 12.2.3
       iron-session: ^6.3.1
@@ -109,7 +109,7 @@ importers:
       '@trpc/server': 9.27.4
       cheerio: 1.0.0-rc.12
       classnames: 2.3.2
-      daisyui: 2.33.0_lecjcatbfhr65vykvcrh2zikoy
+      daisyui: 2.50.2_lecjcatbfhr65vykvcrh2zikoy
       iron-session: 6.3.1_next@12.3.1
       is-hotkey: 0.2.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
@@ -1620,22 +1620,6 @@ packages:
       d3-transition: 3.0.1_d3-selection@3.0.0
     dev: false
 
-  /daisyui/2.33.0_lecjcatbfhr65vykvcrh2zikoy:
-    resolution: {integrity: sha512-NviwGs9oC9NW7IEZiLexHtxkpzP38AKxb9GTUCqUa0qoU8NHKQGqJUzQWZwWSZakU57KsQLblFVe0xMhqw4TlA==}
-    peerDependencies:
-      autoprefixer: ^10.0.2
-      postcss: ^8.1.6
-    dependencies:
-      autoprefixer: 10.4.12_postcss@8.4.18
-      color: 4.2.3
-      css-selector-tokenizer: 0.8.0
-      postcss: 8.4.18
-      postcss-js: 4.0.0_postcss@8.4.18
-      tailwindcss: 3.2.1_neo3lunb2qpadwxplzw7r2isgm
-    transitivePeerDependencies:
-      - ts-node
-    dev: false
-
   /daisyui/2.33.0_xkowlklhtk6sfvtndbucb3hfiy:
     resolution: {integrity: sha512-NviwGs9oC9NW7IEZiLexHtxkpzP38AKxb9GTUCqUa0qoU8NHKQGqJUzQWZwWSZakU57KsQLblFVe0xMhqw4TlA==}
     peerDependencies:
@@ -1648,6 +1632,22 @@ packages:
       postcss: 8.4.18
       postcss-js: 4.0.0_postcss@8.4.18
       tailwindcss: 3.2.1_postcss@8.4.18
+    transitivePeerDependencies:
+      - ts-node
+    dev: false
+
+  /daisyui/2.50.2_lecjcatbfhr65vykvcrh2zikoy:
+    resolution: {integrity: sha512-CzyTsqdkpP2Zwk5Fl+1pFfL7XewRn/COm4TyKx4DbdITpzADMe01j6YZRG/D0kAOyd7t4rXA3zvkqNc7Ak9ukQ==}
+    peerDependencies:
+      autoprefixer: ^10.0.2
+      postcss: ^8.1.6
+    dependencies:
+      autoprefixer: 10.4.12_postcss@8.4.18
+      color: 4.2.3
+      css-selector-tokenizer: 0.8.0
+      postcss: 8.4.18
+      postcss-js: 4.0.0_postcss@8.4.18
+      tailwindcss: 3.2.1_neo3lunb2qpadwxplzw7r2isgm
     transitivePeerDependencies:
       - ts-node
     dev: false
