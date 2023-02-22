@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession as getServerSession } from "next-auth";
-import { signOut } from "next-auth/react";
-import { stdout } from "process";
 import { decodeReadableStream } from "../../utils/string";
 import { authOptions as nextAuthOptions } from "./auth/[...nextauth]";
 
