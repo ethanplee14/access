@@ -21,6 +21,14 @@ export default function fetchMetadata(
       rej("we timing out");
     }, timeout);
 
+    if (url.endsWith(".pdf")) {
+      return {
+        title: "",
+        description: "",
+        img: "",
+      };
+    }
+
     fetch(url)
       .then((res) => res.text())
       .then((html) => {

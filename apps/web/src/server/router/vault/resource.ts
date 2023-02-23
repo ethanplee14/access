@@ -30,6 +30,7 @@ export const vaultResourceRouter = createProtectedRouter()
         meta = await fetchMetadata(resource.url);
       } catch (e) {
         console.log("Failed to lookup meta data for: " + resource.url);
+        console.log(e);
       }
       return { ...resource, meta };
     },
