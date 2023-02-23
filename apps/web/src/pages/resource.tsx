@@ -141,11 +141,8 @@ export default function Resource() {
               onClick={async () => {
                 setLoading(true);
 
-                const resUrl = (await uploadFile()) ?? url;
-                console.log("Url is: " + url);
-
                 await resourceMutation.mutateAsync({
-                  url: resUrl,
+                  url: (await uploadFile()) ?? url,
                   name,
                   subjectName,
                   tags,
@@ -173,15 +170,21 @@ export default function Resource() {
     formData.append("userId", session.data.user.id);
     formData.append("file", file);
 
-    const uploadRes = await fetch("/api/resource", {
-      method: "POST",
-      body: formData,
-    });
+    const uploadRes = await fetch(
+      process.env["NEXT_PUBLIC_FS_URL"] + "/upload",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + process.env["NEXT_PUBLIC_FS_TOKEN"],
+        },
+        body: formData,
+      }
+    );
 
     if (!uploadRes.body) {
       throw new Error("Failed to get upload response body");
     }
-
-    return await decodeReadableStream(uploadRes.body);
+    const path = await decodeReadableStream(uploadRes.body);
+    return process.env["NEXT_PUBLIC_FS_URL"] + "/" + path;
   }
 }
