@@ -185,6 +185,6 @@ export default function Resource() {
       throw new Error("Failed to get upload response body");
     }
     const path = await decodeReadableStream(uploadRes.body);
-    return process.env["NEXT_PUBLIC_FS_URL"] + "/" + path;
+    return process.env["NEXT_PUBLIC_FS_URL"] + "/res/" + path;
   }
 }
