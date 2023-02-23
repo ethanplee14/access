@@ -6,7 +6,7 @@ export default function Sandbox() {
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState(2);
   const pdfUrl =
-    "http://cdn.access.ws/res/cl8kl9nyq0008sgrsozbsjyq0/jqhnRBA0Otih1oLQr3fVD/SOLID_UncleBOB.pdf";
+    "https://cdn.access.ws/res/cl8kl9nyq0008sgrsozbsjyq0/3bjt6qGzmH5znvp50V_HG/SOLID_UncleBOB.pdf";
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
   return (
     <div>
