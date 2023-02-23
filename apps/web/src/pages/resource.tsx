@@ -141,8 +141,11 @@ export default function Resource() {
               onClick={async () => {
                 setLoading(true);
 
+                const resUrl = (await uploadFile()) ?? url;
+                console.log("Url is: " + url);
+
                 await resourceMutation.mutateAsync({
-                  url: (await uploadFile()) ?? url,
+                  url: resUrl,
                   name,
                   subjectName,
                   tags,
