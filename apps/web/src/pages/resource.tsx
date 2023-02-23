@@ -15,12 +15,16 @@ import SaveButton from "../components/common/buttons/save-button";
 import RichTextarea from "../components/common/textarea/rich-textarea";
 import { Descendant } from "slate";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { decodeReadableStream } from "../utils/string";
+import classNames from "classnames";
 
 export default function Resource() {
   //TODO:
   // consider putting subjectsQuery in a state management system or context.
   // Currently passing down subjectNameIdMap 2 levels
   const [url, setUrl] = useState("");
+  const [file, setFile] = useState<File>();
   const [name, setName] = useState("");
   const [subjectName, setSubjectName] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
@@ -29,6 +33,7 @@ export default function Resource() {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const session = useSession();
 
   const subjectsQuery = trpc.useQuery(["vault.subject.record"]);
   const resourceMutation = trpc.useMutation(["vault.resource.create"]);
@@ -63,20 +68,33 @@ export default function Resource() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <LabeledFormControl label={"URL"}>
-              <label className="input-group">
-                <span>
-                  <LinkIcon className={"w-5"} />
-                </span>
-                <input
-                  type="text"
-                  className="input input-bordered w-full"
-                  placeholder={"https://example.com"}
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                />
-              </label>
-            </LabeledFormControl>
+            {!file && (
+              <LabeledFormControl label={"URL"}>
+                <label className="input-group">
+                  <span>
+                    <LinkIcon className={"w-5"} />
+                  </span>
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder={"https://example.com"}
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                  />
+                </label>
+              </LabeledFormControl>
+            )}
+            <input
+              type="file"
+              className={classNames("file-input file-input-bordered", {
+                "file-input-sm w-1/3 ml-auto": !file,
+              })}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                setFile(file);
+                setName(file?.name ?? "");
+              }}
+            />
             <LabeledFormControl label={"Name"}>
               <label className="input-group">
                 <span>
@@ -122,8 +140,9 @@ export default function Resource() {
               className={"btn-md"}
               onClick={async () => {
                 setLoading(true);
+
                 await resourceMutation.mutateAsync({
-                  url,
+                  url: (await uploadFile()) ?? url,
                   name,
                   subjectName,
                   tags,
@@ -141,4 +160,25 @@ export default function Resource() {
       </main>
     </>
   );
+
+  async function uploadFile() {
+    if (!file) return;
+    if (!session.data?.user?.id)
+      throw new Error("There's no user id, something got really messed up");
+
+    const formData = new FormData();
+    formData.append("userId", session.data.user.id);
+    formData.append("file", file);
+
+    const uploadRes = await fetch("/api/resource", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!uploadRes.body) {
+      throw new Error("Failed to get upload response body");
+    }
+
+    return await decodeReadableStream(uploadRes.body);
+  }
 }

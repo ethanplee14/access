@@ -1,67 +1,49 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession as getServerSession } from "next-auth";
-import { createResourceValidator } from "../../server/router/validators/resource";
+import { decodeReadableStream } from "../../utils/string";
 import { authOptions as nextAuthOptions } from "./auth/[...nextauth]";
-import { prisma } from "../../server/db/client";
 
 const createResource = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method != "POST") res.status(404).send("Not found");
-
+  if (req.method != "POST") res.status(405).send("Not allowed");
   const session = await getServerSession(req, res, nextAuthOptions);
   if (!session || !session.user) {
     res.status(403).send({
-      content: "You need to login before you can access this route.",
+      content: "You need to login to access this route.",
     });
     return;
   }
 
-  try {
-    const input = createResourceValidator.parse(JSON.parse(req.body));
-    console.log("We receiving input");
-    console.log(input);
+  /* THIS IS A SECURITY RISK!!!!!
+    right now just forwarding the userId clint side straight to be stored to the back-end. This means if someone's clever enough on the front-end, 
+    they can send files to other people's resource folders. Trying to figure out how to transform multipart/form-data before it's forwarded. 
+    Will keep it like this until further investigations. 
+  */
+  const FS_URL = process.env.FS_URL;
 
-    // const subjectCompositeId = {
-    //   userId_name: {
-    //     userId: session.user.id,
-    //     name: input.subjectName,
-    //   },
-    // };
-    // const { tags: existingTags } = await prisma.vaultSubject.findUniqueOrThrow({
-    //   where: subjectCompositeId,
-    //   select: { tags: { select: { name: true } } },
-    // });
-    // const missingTags = input.tags.filter(
-    //   (t) => !existingTags.map((et) => et.name).includes(t)
-    // );
-    // const { tags: tagIds } = await prisma.vaultSubject.update({
-    //   where: subjectCompositeId,
-    //   data: {
-    //     tags: { create: missingTags.map((t) => ({ name: t })) },
-    //   },
-    //   select: {
-    //     tags: { select: { id: true } },
-    //   },
-    // });
-    // return prisma.vaultSubject.update({
-    //   where: subjectCompositeId,
-    //   data: {
-    //     resources: {
-    //       create: {
-    //         name: input.name,
-    //         url: input.url,
-    //         score: input.review?.score,
-    //         review: input.review?.comment,
-    //         tags: { connect: tagIds },
-    //       },
-    //     },
-    //   },
-    // });
-  } catch (e) {
-    console.log("error");
-    console.log(e);
+  const uploadRes = await fetch(FS_URL + "/upload", {
+    method: "POST",
+    headers: {
+      "Content-Type": req.headers["content-type"] ?? "",
+      Authorization: "Bearer " + process.env.FS_TOKEN,
+    },
+    body: req as any,
+    //sending entire req instead of req.body because body parser is false. If body parser
+    //is true, data is stored in body but we want to send the entire request over.
+  });
 
-    res.status(400).send("Bad request for - create resource");
-  }
+  if (!uploadRes.ok || !uploadRes.body)
+    throw new Error("Failed to read upload response");
+
+  const resPath = await decodeReadableStream(uploadRes.body);
+  res.send(FS_URL + "/res/" + resPath);
 };
 
 export default createResource;
+
+export const config = {
+  api: {
+    bodyParser: false,
+    // body parser malforms the data being forwarded and corrupts data
+    // Setting to false to keep it, will need to check file upload size manually.
+  },
+};

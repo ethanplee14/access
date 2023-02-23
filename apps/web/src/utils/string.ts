@@ -5,3 +5,18 @@ export function commaSeparate(text: string) {
   }
   return separated;
 }
+
+export async function decodeReadableStream<T extends BufferSource>(
+  stream: ReadableStream<T>
+) {
+  const decoder = new TextDecoder();
+  const reader = stream.getReader();
+
+  let chunk = await reader.read();
+  let decodedTxt = decoder.decode(chunk.value);
+  while (!chunk.done) {
+    chunk = await reader?.read();
+    decodedTxt += decoder.decode(chunk.value);
+  }
+  return decodedTxt;
+}

@@ -1,6 +1,6 @@
 // src/server/router/index.ts
-import { createRouter } from "./context";
 import superjson from "superjson";
+import { createRouter } from "./context";
 import { subjectRouter } from "./subject";
 import { vaultRouter } from "./vault";
 import { vaultResourceRouter } from "./vault/resource";
