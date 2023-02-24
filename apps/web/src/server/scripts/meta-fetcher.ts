@@ -17,17 +17,17 @@ export default function fetchMetadata(
   }
 
   return new Promise((res, rej) => {
+    if (url.endsWith(".pdf")) {
+      res({
+        title: "",
+        description: "",
+        image: "",
+      });
+      return;
+    }
     setTimeout(() => {
       rej("we timing out");
     }, timeout);
-
-    if (url.endsWith(".pdf")) {
-      return {
-        title: "",
-        description: "",
-        img: "",
-      };
-    }
 
     fetch(url)
       .then((res) => res.text())

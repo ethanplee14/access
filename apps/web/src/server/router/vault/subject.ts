@@ -57,6 +57,8 @@ export const vaultSubjectRouter = createProtectedRouter()
           }
         })
       );
+      console.log("Returning resources");
+
       return { subject: subjectWithResources, resources: resourcesWithMeta };
     },
   })
