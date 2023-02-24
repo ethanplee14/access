@@ -17,10 +17,6 @@ export default function fetchMetadata(
   }
 
   return new Promise((res, rej) => {
-    setTimeout(() => {
-      rej("we timing out");
-    }, timeout);
-
     if (url.endsWith(".pdf")) {
       return {
         title: "",
@@ -28,6 +24,9 @@ export default function fetchMetadata(
         img: "",
       };
     }
+    setTimeout(() => {
+      rej("we timing out");
+    }, timeout);
 
     fetch(url)
       .then((res) => res.text())
