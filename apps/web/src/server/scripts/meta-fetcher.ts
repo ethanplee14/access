@@ -18,11 +18,12 @@ export default function fetchMetadata(
 
   return new Promise((res, rej) => {
     if (url.endsWith(".pdf")) {
-      return {
+      res({
         title: "",
         description: "",
-        img: "",
-      };
+        image: "",
+      });
+      return;
     }
     setTimeout(() => {
       rej("we timing out");

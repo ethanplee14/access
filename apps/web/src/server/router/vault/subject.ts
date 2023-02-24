@@ -44,6 +44,8 @@ export const vaultSubjectRouter = createProtectedRouter()
         string,
         VaultResource & { tags: VaultTag[] } & { meta: Metadata }
       > = {};
+      console.log("Fetching all");
+
       await Promise.all(
         subjectWithResources.resources.map(async (r) => {
           try {
@@ -57,6 +59,8 @@ export const vaultSubjectRouter = createProtectedRouter()
           }
         })
       );
+      console.log("Returning resources");
+
       return { subject: subjectWithResources, resources: resourcesWithMeta };
     },
   })

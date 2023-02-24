@@ -14,9 +14,10 @@ export default function Sandbox() {
     <div>
       <Document
         file={pdfUrl}
+        className=""
         onLoadSuccess={(doc) => setNumPages(doc.numPages)}
       >
-        <Page className="mx-auto" scale={0.75} pageNumber={pageNumber} />
+        <Page className="w-0 mx-auto text-center" pageNumber={pageNumber} />
       </Document>
       <p>
         <button onClick={() => setPageNumber(Math.max(pageNumber - 1, 0))}>
