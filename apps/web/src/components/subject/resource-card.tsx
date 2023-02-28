@@ -45,6 +45,7 @@ export default function ResourceCard({
             src={resource.meta.image}
             alt={resource.name}
             layout="fill"
+            className="rounded-t-lg"
             objectFit="cover"
           />
         </div>
