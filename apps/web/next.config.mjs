@@ -21,6 +21,10 @@ export default defineNextConfig({
         protocol: "https",
         hostname: "**",
       },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
     ],
   },
 });
